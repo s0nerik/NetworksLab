@@ -2,6 +2,7 @@ package com.github.sonerik.networkslab.fragments.chat;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -47,6 +48,7 @@ public abstract class ChatFragment extends NetworkFragment {
         ButterKnife.bind(this, view);
 
         recyclerView.setAdapter(adapter);
+        ((LinearLayoutManager) recyclerView.getLayoutManager()).setStackFromEnd(true);
     }
 
     @Override

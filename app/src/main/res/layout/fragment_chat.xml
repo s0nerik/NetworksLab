@@ -9,11 +9,22 @@
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycler"
+        android:layout_toLeftOf="@+id/recycler_users"
         android:layout_above="@+id/textInput"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layoutManager="android.support.v7.widget.LinearLayoutManager"
         tools:listitem="@layout/item_chat"
+        />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recycler_users"
+        android:layout_alignParentRight="true"
+        android:layout_above="@+id/textInput"
+        android:layout_width="100dp"
+        android:layout_height="match_parent"
+        app:layoutManager="android.support.v7.widget.LinearLayoutManager"
+        tools:listitem="@layout/item_chat_users"
         />
 
     <EditText

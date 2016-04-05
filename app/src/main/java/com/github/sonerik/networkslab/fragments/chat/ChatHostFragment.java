@@ -5,7 +5,11 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.github.sonerik.networkslab.Constants;
+import com.github.sonerik.networkslab.adapters.chat_users.ChatUsersItem;
 import com.github.sonerik.networkslab.beans.ChatMessage;
+import com.github.sonerik.networkslab.beans.DeviceConnectedMessage;
+
+import org.greenrobot.eventbus.EventBus;
 
 public class ChatHostFragment extends ChatFragment {
 
@@ -13,11 +17,23 @@ public class ChatHostFragment extends ChatFragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        network.startNetworkService(device -> Log.d(Constants.LOG_TAG, "Device connected: "+device));
+        EventBus.getDefault().register(this);
+
+        network.startNetworkService(device -> {
+            Log.d(Constants.LOG_TAG, "Device connected: "+device);
+
+            network.sendToAllDevices(new DeviceConnectedMessage(device),
+                                     () -> Log.e(Constants.LOG_TAG, "Can't notify that new user has connected!"));
+
+            users.add(new ChatUsersItem(device));
+            usersAdapter.notifyDataSetChanged();
+        });
     }
 
     @Override
     public void onDestroy() {
+        EventBus.getDefault().unregister(this);
+
         network.stopNetworkService(true);
 
         super.onDestroy();

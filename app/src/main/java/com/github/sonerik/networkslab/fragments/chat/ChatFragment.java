@@ -14,8 +14,14 @@ import com.github.sonerik.networkslab.Constants;
 import com.github.sonerik.networkslab.R;
 import com.github.sonerik.networkslab.adapters.chat_message.ChatMessageAdapter;
 import com.github.sonerik.networkslab.adapters.chat_message.ChatMessageItem;
+import com.github.sonerik.networkslab.adapters.chat_users.ChatUsersAdapter;
+import com.github.sonerik.networkslab.adapters.chat_users.ChatUsersItem;
 import com.github.sonerik.networkslab.beans.ChatMessage;
+import com.github.sonerik.networkslab.beans.DeviceConnectedMessage;
+import com.github.sonerik.networkslab.events.ChatUserClickedEvent;
 import com.github.sonerik.networkslab.fragments.base.NetworkFragment;
+
+import org.greenrobot.eventbus.Subscribe;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,8 +39,14 @@ public abstract class ChatFragment extends NetworkFragment {
     @Bind(R.id.recycler)
     RecyclerView recyclerView;
 
+    @Bind(R.id.recycler_users)
+    RecyclerView usersRecycler;
+
     private List<ChatMessageItem> messages = new ArrayList<>();
     private ChatMessageAdapter adapter = new ChatMessageAdapter(messages);
+
+    protected List<ChatUsersItem> users = new ArrayList<>();
+    protected ChatUsersAdapter usersAdapter = new ChatUsersAdapter(users);
 
     @Nullable
     @Override
@@ -49,6 +61,11 @@ public abstract class ChatFragment extends NetworkFragment {
 
         recyclerView.setAdapter(adapter);
         ((LinearLayoutManager) recyclerView.getLayoutManager()).setStackFromEnd(true);
+
+        usersRecycler.setAdapter(usersAdapter);
+
+        users.add(new ChatUsersItem(null));
+        usersAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -70,6 +87,13 @@ public abstract class ChatFragment extends NetworkFragment {
         if (msg != null) {
             messages.add(new ChatMessageItem(msg));
             adapter.notifyDataSetChanged();
+        } else {
+            val userConnectedMsg = DeviceConnectedMessage.fromJson(String.valueOf(o));
+
+            if (userConnectedMsg != null && !userConnectedMsg.device.equals(network.thisDevice)) {
+                users.add(new ChatUsersItem(userConnectedMsg.device));
+                usersAdapter.notifyDataSetChanged();
+            }
         }
     }
 
@@ -87,6 +111,11 @@ public abstract class ChatFragment extends NetworkFragment {
 
         messages.add(new ChatMessageItem(msg));
         adapter.notifyDataSetChanged();
+    }
+
+    @Subscribe
+    public void onEvent(ChatUserClickedEvent e) {
+        Log.d(Constants.LOG_TAG, "ChatUserClickedEvent: "+e.device);
     }
 
     protected abstract void send(ChatMessage msg);

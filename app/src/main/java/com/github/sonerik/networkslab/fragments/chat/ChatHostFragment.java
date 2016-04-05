@@ -5,6 +5,7 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.github.sonerik.networkslab.Constants;
+import com.github.sonerik.networkslab.beans.ChatMessage;
 
 public class ChatHostFragment extends ChatFragment {
 
@@ -20,5 +21,14 @@ public class ChatHostFragment extends ChatFragment {
         network.stopNetworkService(true);
 
         super.onDestroy();
+    }
+
+    @Override
+    protected void send(ChatMessage msg) {
+        if (msg.recipient != null) {
+            network.sendToDevice(msg.recipient, msg, () -> Log.e(Constants.LOG_TAG, "Failed to send text!"));
+        } else {
+            network.sendToAllDevices(msg, () -> Log.e(Constants.LOG_TAG, "Failed to send text!"));
+        }
     }
 }

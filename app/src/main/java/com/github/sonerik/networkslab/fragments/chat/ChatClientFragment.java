@@ -10,6 +10,7 @@ import com.github.sonerik.networkslab.R;
 import com.github.sonerik.networkslab.events.DeviceChosenEvent;
 import com.github.sonerik.networkslab.fragments.ChooseDeviceFragment;
 
+import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
 public class ChatClientFragment extends ChatFragment {
@@ -24,6 +25,12 @@ public class ChatClientFragment extends ChatFragment {
                      .commit();
     }
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        EventBus.getDefault().register(this);
+    }
+
     @Subscribe
     public void onEvent(DeviceChosenEvent e) {
         network.registerWithHost(e.device,
@@ -33,6 +40,8 @@ public class ChatClientFragment extends ChatFragment {
 
     @Override
     public void onDestroy() {
+        EventBus.getDefault().unregister(this);
+
         network.unregisterClient(() -> Log.d(Constants.LOG_TAG, "Unregistered from server."),
                                  () -> Log.d(Constants.LOG_TAG, "Failed to unregister from server."),
                                  false);

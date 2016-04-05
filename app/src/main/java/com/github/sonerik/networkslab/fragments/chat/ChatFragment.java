@@ -1,9 +1,7 @@
 package com.github.sonerik.networkslab.fragments.chat;
 
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,12 +13,7 @@ import com.github.sonerik.networkslab.Constants;
 import com.github.sonerik.networkslab.R;
 import com.github.sonerik.networkslab.adapters.chat_message.ChatMessageAdapter;
 import com.github.sonerik.networkslab.adapters.chat_message.ChatMessageItem;
-import com.peak.salut.Callbacks.SalutDataCallback;
-import com.peak.salut.Salut;
-import com.peak.salut.SalutDataReceiver;
-import com.peak.salut.SalutServiceData;
-
-import org.greenrobot.eventbus.EventBus;
+import com.github.sonerik.networkslab.fragments.base.NetworkFragment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,7 +22,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public abstract class ChatFragment extends Fragment implements SalutDataCallback {
+public abstract class ChatFragment extends NetworkFragment {
 
     @Bind(R.id.textInput)
     EditText editText;
@@ -39,15 +32,6 @@ public abstract class ChatFragment extends Fragment implements SalutDataCallback
 
     private List<ChatMessageItem> messages = new ArrayList<>();
     private ChatMessageAdapter adapter = new ChatMessageAdapter(messages);
-
-    private SalutDataReceiver dataReceiver = new SalutDataReceiver(getActivity(), this);
-    private SalutServiceData serviceData = new SalutServiceData(Constants.SERVICE_CHAT,
-                                                                Constants.SERVICE_CHAT_DEFAULT_PORT,
-                                                                Build.MODEL);
-
-    protected Salut network = new Salut(dataReceiver,
-                                        serviceData,
-                                        () -> Log.e(Constants.LOG_TAG, "Sorry, but this device does not support WiFi Direct."));
 
     @Nullable
     @Override
@@ -64,24 +48,17 @@ public abstract class ChatFragment extends Fragment implements SalutDataCallback
     }
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        EventBus.getDefault().register(this);
+    protected String getServiceName() {
+        return Constants.SERVICE_CHAT;
     }
 
     @Override
-    public void onDestroy() {
-        EventBus.getDefault().unregister(this);
-        super.onDestroy();
+    protected int getDefaultServicePort() {
+        return Constants.SERVICE_CHAT_DEFAULT_PORT;
     }
 
     @OnClick(R.id.btnSend)
     public void onSend() {
         Log.d(Constants.LOG_TAG, "onSend: "+editText.getText());
-    }
-
-    @Override
-    public void onDataReceived(Object o) {
-        Log.d(Constants.LOG_TAG, "onDataReceived: "+o);
     }
 }

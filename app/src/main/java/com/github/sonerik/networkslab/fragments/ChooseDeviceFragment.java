@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +24,7 @@ import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import lombok.Setter;
 
 public class ChooseDeviceFragment extends Fragment {
     @Bind(R.id.recycler)
@@ -31,6 +33,7 @@ public class ChooseDeviceFragment extends Fragment {
     private List<DeviceChooserItem> items = new ArrayList<>();
     private DeviceChooserAdapter adapter = new DeviceChooserAdapter(items);
 
+    @Setter
     private Salut network;
 
     public ChooseDeviceFragment() {
@@ -57,7 +60,21 @@ public class ChooseDeviceFragment extends Fragment {
 
         network.discoverNetworkServices(device -> {
             items.add(new DeviceChooserItem(device));
+            adapter.notifyDataSetChanged();
         }, false);
+
+        view.setFocusableInTouchMode(true);
+        view.requestFocus();
+        view.setOnKeyListener((v, keyCode, event) -> {
+            if( keyCode == KeyEvent.KEYCODE_BACK )
+            {
+                getActivity().getSupportFragmentManager().popBackStack();
+                getActivity().getSupportFragmentManager().popBackStack();
+                return true;
+            }
+            return false;
+        });
+
     }
 
     @Override
@@ -76,9 +93,6 @@ public class ChooseDeviceFragment extends Fragment {
     public void onEvent(DeviceChosenEvent e) {
         network.stopServiceDiscovery(false);
 
-        getActivity().getSupportFragmentManager()
-                     .beginTransaction()
-                     .remove(this)
-                     .commit();
+        getActivity().getSupportFragmentManager().popBackStack();
     }
 }

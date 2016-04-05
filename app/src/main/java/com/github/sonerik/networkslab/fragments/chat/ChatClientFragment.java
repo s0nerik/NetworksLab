@@ -21,7 +21,8 @@ public class ChatClientFragment extends ChatFragment {
 
         getActivity().getSupportFragmentManager()
                      .beginTransaction()
-                     .add(R.id.content, new ChooseDeviceFragment(network), null)
+                     .add(R.id.content, new ChooseDeviceFragment(network))
+                     .addToBackStack(null)
                      .commit();
     }
 

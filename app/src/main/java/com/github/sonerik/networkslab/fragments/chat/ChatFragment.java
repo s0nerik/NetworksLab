@@ -82,6 +82,9 @@ public abstract class ChatFragment extends NetworkFragment {
         msg.recipient = null;
 
         send(msg);
+
+        messages.add(new ChatMessageItem(msg));
+        adapter.notifyDataSetChanged();
     }
 
     protected abstract void send(ChatMessage msg);

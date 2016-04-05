@@ -8,6 +8,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.github.sonerik.networkslab.R;
+import com.github.sonerik.networkslab.fragments.chat.ChatClientFragment;
+import com.github.sonerik.networkslab.fragments.chat.ChatHostFragment;
 
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -31,6 +33,15 @@ public class StartFragment extends Fragment {
         getActivity().getSupportFragmentManager()
                      .beginTransaction()
                      .replace(R.id.content, new ChatClientFragment())
+                     .addToBackStack(null)
+                     .commit();
+    }
+
+    @OnClick(R.id.btnChatHost)
+    public void onStartChatHost() {
+        getActivity().getSupportFragmentManager()
+                     .beginTransaction()
+                     .replace(R.id.content, new ChatHostFragment())
                      .addToBackStack(null)
                      .commit();
     }

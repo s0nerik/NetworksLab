@@ -1,4 +1,4 @@
-package com.github.sonerik.networkslab.fragments;
+package com.github.sonerik.networkslab.fragments.chat;
 
 import android.os.Build;
 import android.os.Bundle;
@@ -20,6 +20,8 @@ import com.peak.salut.Salut;
 import com.peak.salut.SalutDataReceiver;
 import com.peak.salut.SalutServiceData;
 
+import org.greenrobot.eventbus.EventBus;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,7 +29,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class ChatClientFragment extends Fragment implements SalutDataCallback {
+public abstract class ChatFragment extends Fragment implements SalutDataCallback {
 
     @Bind(R.id.textInput)
     EditText editText;
@@ -43,9 +45,9 @@ public class ChatClientFragment extends Fragment implements SalutDataCallback {
                                                                 Constants.SERVICE_CHAT_DEFAULT_PORT,
                                                                 Build.MODEL);
 
-    private Salut network = new Salut(dataReceiver,
-                                      serviceData,
-                                      () -> Log.e(Constants.LOG_TAG, "Sorry, but this device does not support WiFi Direct."));
+    protected Salut network = new Salut(dataReceiver,
+                                        serviceData,
+                                        () -> Log.e(Constants.LOG_TAG, "Sorry, but this device does not support WiFi Direct."));
 
     @Nullable
     @Override
@@ -59,11 +61,18 @@ public class ChatClientFragment extends Fragment implements SalutDataCallback {
         ButterKnife.bind(this, view);
 
         recyclerView.setAdapter(adapter);
+    }
 
-        getActivity().getSupportFragmentManager()
-                     .beginTransaction()
-                     .add(R.id.content, new ChooseDeviceFragment(network), null)
-                     .commit();
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onDestroy() {
+        EventBus.getDefault().unregister(this);
+        super.onDestroy();
     }
 
     @OnClick(R.id.btnSend)

@@ -7,6 +7,7 @@ import android.view.View;
 
 import com.github.sonerik.networkslab.Constants;
 import com.github.sonerik.networkslab.R;
+import com.github.sonerik.networkslab.beans.ChatMessage;
 import com.github.sonerik.networkslab.events.DeviceChosenEvent;
 import com.github.sonerik.networkslab.fragments.ChooseDeviceFragment;
 
@@ -21,8 +22,14 @@ public class ChatClientFragment extends ChatFragment {
 
         getActivity().getSupportFragmentManager()
                      .beginTransaction()
-                     .add(R.id.content, new ChooseDeviceFragment(network), null)
+                     .add(R.id.content, new ChooseDeviceFragment(network))
+                     .addToBackStack(null)
                      .commit();
+    }
+
+    @Override
+    protected void send(ChatMessage msg) {
+        network.sendToHost(msg, () -> Log.e(Constants.LOG_TAG, "Failed to send text!"));
     }
 
     @Override

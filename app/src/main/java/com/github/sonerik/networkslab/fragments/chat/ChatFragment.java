@@ -13,6 +13,7 @@ import com.github.sonerik.networkslab.Constants;
 import com.github.sonerik.networkslab.R;
 import com.github.sonerik.networkslab.adapters.chat_message.ChatMessageAdapter;
 import com.github.sonerik.networkslab.adapters.chat_message.ChatMessageItem;
+import com.github.sonerik.networkslab.beans.ChatMessage;
 import com.github.sonerik.networkslab.fragments.base.NetworkFragment;
 
 import java.util.ArrayList;
@@ -21,6 +22,7 @@ import java.util.List;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import lombok.val;
 
 public abstract class ChatFragment extends NetworkFragment {
 
@@ -57,8 +59,30 @@ public abstract class ChatFragment extends NetworkFragment {
         return Constants.SERVICE_CHAT_DEFAULT_PORT;
     }
 
+    @Override
+    public void onDataReceived(Object o) {
+        super.onDataReceived(o);
+
+        val str = String.valueOf(o);
+        val msg = ChatMessage.fromJson(str);
+        if (msg != null) {
+            messages.add(new ChatMessageItem(msg));
+            adapter.notifyDataSetChanged();
+        }
+    }
+
     @OnClick(R.id.btnSend)
     public void onSend() {
         Log.d(Constants.LOG_TAG, "onSend: "+editText.getText());
+
+        // TODO: recipient chooser
+        val msg = new ChatMessage();
+        msg.text = editText.getText().toString();
+        msg.author = network.thisDevice;
+        msg.recipient = null;
+
+        send(msg);
     }
+
+    protected abstract void send(ChatMessage msg);
 }

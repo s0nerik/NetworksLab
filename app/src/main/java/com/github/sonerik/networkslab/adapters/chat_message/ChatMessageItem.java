@@ -4,7 +4,7 @@ import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
 import com.github.sonerik.networkslab.R;
-import com.peak.salut.SalutDevice;
+import com.github.sonerik.networkslab.beans.ChatMessage;
 
 import java.util.List;
 
@@ -17,7 +17,7 @@ import lombok.RequiredArgsConstructor;
 public class ChatMessageItem extends AbstractFlexibleItem<ChatMessageViewHolder> {
 
     @Getter
-    private final SalutDevice device;
+    private final ChatMessage message;
 
     @Override
     public int getLayoutRes() {
@@ -31,12 +31,12 @@ public class ChatMessageItem extends AbstractFlexibleItem<ChatMessageViewHolder>
 
     @Override
     public void bindViewHolder(FlexibleAdapter adapter, ChatMessageViewHolder holder, int position, List payloads) {
-        holder.setDevice(device);
+        holder.setMessage(message);
     }
 
     @Override
     public boolean equals(Object o) {
-        return device.equals(o);
+        return message.equals(o);
     }
 
 }

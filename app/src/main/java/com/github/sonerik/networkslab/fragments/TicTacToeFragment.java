@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.github.sonerik.networkslab.R;
-import com.github.sonerik.networkslab.TicTacToeField;
+import com.github.sonerik.networkslab.custom_views.TicTacToeField;
 import com.github.sonerik.networkslab.events.OnCellClickedEvent;
 
 import org.greenrobot.eventbus.EventBus;

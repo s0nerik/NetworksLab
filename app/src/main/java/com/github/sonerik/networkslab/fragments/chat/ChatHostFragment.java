@@ -22,7 +22,11 @@ public class ChatHostFragment extends ChatFragment {
         network.startNetworkService(device -> {
             Log.d(Constants.LOG_TAG, "Device connected: "+device);
 
-            network.sendToAllDevices(new DeviceConnectedMessage(device),
+            ChatMessage msg = new ChatMessage();
+            msg.nestedType = ChatMessage.NestedType.DEVICE_CONNECTED;
+            msg.text = new DeviceConnectedMessage(device).toJson();
+
+            network.sendToAllDevices(msg,
                                      () -> Log.e(Constants.LOG_TAG, "Can't notify that new user has connected!"));
 
             users.add(new ChatUsersItem(device));

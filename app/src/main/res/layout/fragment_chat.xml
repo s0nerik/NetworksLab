@@ -21,8 +21,9 @@
         android:id="@+id/recycler_users"
         android:layout_alignParentRight="true"
         android:layout_above="@+id/textInput"
-        android:layout_width="100dp"
+        android:layout_width="120dp"
         android:layout_height="match_parent"
+        android:background="#ccc"
         app:layoutManager="android.support.v7.widget.LinearLayoutManager"
         tools:listitem="@layout/item_chat_users"
         />

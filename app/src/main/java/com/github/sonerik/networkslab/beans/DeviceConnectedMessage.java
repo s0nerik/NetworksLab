@@ -12,6 +12,7 @@ import java.io.IOException;
 
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
+import lombok.SneakyThrows;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -19,6 +20,11 @@ import lombok.NoArgsConstructor;
 public class DeviceConnectedMessage {
     @JsonField
     public SalutDevice device;
+
+    @SneakyThrows
+    public String toJson() {
+        return LoganSquare.serialize(this);
+    }
 
     public static DeviceConnectedMessage fromJson(String json) {
         try {

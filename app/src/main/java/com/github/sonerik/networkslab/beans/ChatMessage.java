@@ -5,6 +5,7 @@ import android.util.Log;
 import com.bluelinelabs.logansquare.LoganSquare;
 import com.bluelinelabs.logansquare.annotation.JsonField;
 import com.bluelinelabs.logansquare.annotation.JsonObject;
+import com.bluelinelabs.logansquare.typeconverters.StringBasedTypeConverter;
 import com.github.sonerik.networkslab.Constants;
 import com.peak.salut.SalutDevice;
 
@@ -17,6 +18,19 @@ import lombok.SneakyThrows;
 @JsonObject
 public class ChatMessage {
 
+    public enum NestedType { NOT_NESTED, DEVICE_CONNECTED }
+
+    public static class NestedTypeConverter extends StringBasedTypeConverter<NestedType> {
+        @Override
+        public NestedType getFromString(String s) {
+            return NestedType.valueOf(s);
+        }
+
+        public String convertToString(NestedType object) {
+            return object.toString();
+        }
+    }
+
     @JsonField
     public String text;
 
@@ -25,6 +39,9 @@ public class ChatMessage {
 
     @JsonField
     public SalutDevice recipient;
+
+    @JsonField(typeConverter = NestedTypeConverter.class)
+    public NestedType nestedType;
 
     @SneakyThrows
     public String toJson() {

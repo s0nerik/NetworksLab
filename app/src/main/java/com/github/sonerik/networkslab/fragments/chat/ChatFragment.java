@@ -85,14 +85,20 @@ public abstract class ChatFragment extends NetworkFragment {
         val str = String.valueOf(o);
         val msg = ChatMessage.fromJson(str);
         if (msg != null) {
-            messages.add(new ChatMessageItem(msg));
-            adapter.notifyDataSetChanged();
-        } else {
-            val userConnectedMsg = DeviceConnectedMessage.fromJson(String.valueOf(o));
-
-            if (userConnectedMsg != null && !userConnectedMsg.device.equals(network.thisDevice)) {
-                users.add(new ChatUsersItem(userConnectedMsg.device));
-                usersAdapter.notifyDataSetChanged();
+            switch (msg.nestedType) {
+                case NOT_NESTED:
+                    messages.add(new ChatMessageItem(msg));
+                    adapter.notifyDataSetChanged();
+                    break;
+                case DEVICE_CONNECTED:
+                    val userConnectedMsg = DeviceConnectedMessage.fromJson(msg.text);
+                    if (userConnectedMsg != null
+                            && !userConnectedMsg.device.readableName.equals(network.thisDevice.readableName)
+                            && !userConnectedMsg.device.deviceName.equals(network.thisDevice.deviceName)) {
+                        users.add(new ChatUsersItem(userConnectedMsg.device));
+                        usersAdapter.notifyDataSetChanged();
+                    }
+                    break;
             }
         }
     }

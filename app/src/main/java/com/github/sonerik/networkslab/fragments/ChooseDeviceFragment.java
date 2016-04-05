@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.Bind;
+import butterknife.ButterKnife;
 
 public class ChooseDeviceFragment extends Fragment {
     @Bind(R.id.recycler)
@@ -50,6 +51,8 @@ public class ChooseDeviceFragment extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        ButterKnife.bind(this, view);
+
         recyclerView.setAdapter(adapter);
 
         network.discoverNetworkServices(device -> {

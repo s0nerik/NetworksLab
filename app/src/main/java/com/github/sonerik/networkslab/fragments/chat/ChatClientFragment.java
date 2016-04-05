@@ -7,6 +7,7 @@ import android.view.View;
 
 import com.github.sonerik.networkslab.Constants;
 import com.github.sonerik.networkslab.R;
+import com.github.sonerik.networkslab.adapters.chat_users.ChatUsersItem;
 import com.github.sonerik.networkslab.beans.ChatMessage;
 import com.github.sonerik.networkslab.events.DeviceChosenEvent;
 import com.github.sonerik.networkslab.fragments.ChooseDeviceFragment;
@@ -14,6 +15,7 @@ import com.github.sonerik.networkslab.fragments.ChooseDeviceFragment;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
+// TODO: unregister events, private rooms
 public class ChatClientFragment extends ChatFragment {
 
     @Override
@@ -41,7 +43,11 @@ public class ChatClientFragment extends ChatFragment {
     @Subscribe
     public void onEvent(DeviceChosenEvent e) {
         network.registerWithHost(e.device,
-                                 () -> Log.d(Constants.LOG_TAG, "We're now registered."),
+                                 () -> {
+                                     Log.d(Constants.LOG_TAG, "We're now registered.");
+                                     users.add(new ChatUsersItem(e.device));
+                                     usersAdapter.notifyDataSetChanged();
+                                 },
                                  () -> Log.d(Constants.LOG_TAG, "We failed to register."));
     }
 

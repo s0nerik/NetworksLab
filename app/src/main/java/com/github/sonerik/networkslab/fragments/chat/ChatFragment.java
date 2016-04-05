@@ -2,6 +2,7 @@ package com.github.sonerik.networkslab.fragments.chat;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -13,8 +14,14 @@ import com.github.sonerik.networkslab.Constants;
 import com.github.sonerik.networkslab.R;
 import com.github.sonerik.networkslab.adapters.chat_message.ChatMessageAdapter;
 import com.github.sonerik.networkslab.adapters.chat_message.ChatMessageItem;
+import com.github.sonerik.networkslab.adapters.chat_users.ChatUsersAdapter;
+import com.github.sonerik.networkslab.adapters.chat_users.ChatUsersItem;
 import com.github.sonerik.networkslab.beans.ChatMessage;
+import com.github.sonerik.networkslab.beans.DeviceConnectedMessage;
+import com.github.sonerik.networkslab.events.ChatUserClickedEvent;
 import com.github.sonerik.networkslab.fragments.base.NetworkFragment;
+
+import org.greenrobot.eventbus.Subscribe;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,8 +39,14 @@ public abstract class ChatFragment extends NetworkFragment {
     @Bind(R.id.recycler)
     RecyclerView recyclerView;
 
+    @Bind(R.id.recycler_users)
+    RecyclerView usersRecycler;
+
     private List<ChatMessageItem> messages = new ArrayList<>();
     private ChatMessageAdapter adapter = new ChatMessageAdapter(messages);
+
+    protected List<ChatUsersItem> users = new ArrayList<>();
+    protected ChatUsersAdapter usersAdapter = new ChatUsersAdapter(users);
 
     @Nullable
     @Override
@@ -47,6 +60,12 @@ public abstract class ChatFragment extends NetworkFragment {
         ButterKnife.bind(this, view);
 
         recyclerView.setAdapter(adapter);
+        ((LinearLayoutManager) recyclerView.getLayoutManager()).setStackFromEnd(true);
+
+        usersRecycler.setAdapter(usersAdapter);
+
+        users.add(new ChatUsersItem(null));
+        usersAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -66,8 +85,21 @@ public abstract class ChatFragment extends NetworkFragment {
         val str = String.valueOf(o);
         val msg = ChatMessage.fromJson(str);
         if (msg != null) {
-            messages.add(new ChatMessageItem(msg));
-            adapter.notifyDataSetChanged();
+            switch (msg.nestedType) {
+                case NOT_NESTED:
+                    messages.add(new ChatMessageItem(msg));
+                    adapter.notifyDataSetChanged();
+                    break;
+                case DEVICE_CONNECTED:
+                    val userConnectedMsg = DeviceConnectedMessage.fromJson(msg.text);
+                    if (userConnectedMsg != null
+                            && !userConnectedMsg.device.readableName.equals(network.thisDevice.readableName)
+                            && !userConnectedMsg.device.deviceName.equals(network.thisDevice.deviceName)) {
+                        users.add(new ChatUsersItem(userConnectedMsg.device));
+                        usersAdapter.notifyDataSetChanged();
+                    }
+                    break;
+            }
         }
     }
 
@@ -82,6 +114,14 @@ public abstract class ChatFragment extends NetworkFragment {
         msg.recipient = null;
 
         send(msg);
+
+        messages.add(new ChatMessageItem(msg));
+        adapter.notifyDataSetChanged();
+    }
+
+    @Subscribe
+    public void onEvent(ChatUserClickedEvent e) {
+        Log.d(Constants.LOG_TAG, "ChatUserClickedEvent: "+e.device);
     }
 
     protected abstract void send(ChatMessage msg);

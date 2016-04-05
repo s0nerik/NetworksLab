@@ -32,14 +32,9 @@ public class ChatMessage {
     }
 
     public static ChatMessage fromJson(String json) {
-        Log.d(Constants.LOG_TAG, "ChatMessage::fromJson: "+json);
         try {
             return LoganSquare.parse(json, ChatMessage.class);
         } catch (IOException e) {
-            e.printStackTrace();
-            Log.d(Constants.LOG_TAG, e.toString());
-            Log.d(Constants.LOG_TAG, "Error while parsing ChatMessage", e);
-            Log.e(Constants.LOG_TAG, e.toString());
             Log.e(Constants.LOG_TAG, "Error while parsing ChatMessage", e);
             return null;
         }

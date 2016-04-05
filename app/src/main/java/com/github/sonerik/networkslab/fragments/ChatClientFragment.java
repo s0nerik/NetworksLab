@@ -21,7 +21,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class ChatFragment extends Fragment {
+public class ChatClientFragment extends Fragment {
 
     @Bind(R.id.textInput)
     EditText editText;
@@ -30,6 +30,7 @@ public class ChatFragment extends Fragment {
     RecyclerView recyclerView;
 
     private List<ChatMessageItem> messages = new ArrayList<>();
+    private ChatMessageAdapter adapter = new ChatMessageAdapter(messages);
 
     @Nullable
     @Override
@@ -42,7 +43,7 @@ public class ChatFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
 
-        recyclerView.setAdapter(new ChatMessageAdapter(messages));
+        recyclerView.setAdapter(adapter);
     }
 
     @OnClick(R.id.btnSend)

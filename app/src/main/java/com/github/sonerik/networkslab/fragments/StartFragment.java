@@ -9,6 +9,9 @@ import android.view.ViewGroup;
 
 import com.github.sonerik.networkslab.R;
 
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+
 public class StartFragment extends Fragment {
 
     @Nullable
@@ -16,4 +19,20 @@ public class StartFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_start, container, false);
     }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        ButterKnife.bind(this, view);
+    }
+
+    @OnClick(R.id.btnChatClient)
+    public void onStartChatClient() {
+        getActivity().getSupportFragmentManager()
+                     .beginTransaction()
+                     .replace(R.id.content, new ChatClientFragment())
+                     .addToBackStack(null)
+                     .commit();
+    }
+
 }

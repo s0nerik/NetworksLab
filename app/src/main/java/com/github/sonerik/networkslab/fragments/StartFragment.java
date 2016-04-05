@@ -46,4 +46,13 @@ public class StartFragment extends Fragment {
                      .commit();
     }
 
+    @OnClick(R.id.btnTicTacToe)
+    public void onStartTicTacToe() {
+        getActivity().getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.content, new TicTacToeFragment())
+                .addToBackStack(null)
+                .commit();
+    }
+
 }

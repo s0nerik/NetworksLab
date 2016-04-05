@@ -18,8 +18,7 @@
                 android:id="@+id/cell11"
                 style="@style/TicTacToeText"
                 android:layout_width="@dimen/cell_size"
-                android:layout_height="@dimen/cell_size"
-                android:text="X" />
+                android:layout_height="@dimen/cell_size" />
 
             <View
                 android:layout_width="1dp"
@@ -30,8 +29,7 @@
                 android:id="@+id/cell12"
                 style="@style/TicTacToeText"
                 android:layout_width="@dimen/cell_size"
-                android:layout_height="@dimen/cell_size"
-                android:text="O" />
+                android:layout_height="@dimen/cell_size" />
 
             <View
                 android:layout_width="1dp"
@@ -42,8 +40,7 @@
                 android:id="@+id/cell13"
                 style="@style/TicTacToeText"
                 android:layout_width="@dimen/cell_size"
-                android:layout_height="@dimen/cell_size"
-                android:text="X" />
+                android:layout_height="@dimen/cell_size" />
 
         </LinearLayout>
 
@@ -60,8 +57,7 @@
                 android:id="@+id/cell21"
                 style="@style/TicTacToeText"
                 android:layout_width="@dimen/cell_size"
-                android:layout_height="@dimen/cell_size"
-                android:text="O" />
+                android:layout_height="@dimen/cell_size" />
 
             <View
                 android:layout_width="1dp"
@@ -72,8 +68,7 @@
                 android:id="@+id/cell22"
                 style="@style/TicTacToeText"
                 android:layout_width="@dimen/cell_size"
-                android:layout_height="@dimen/cell_size"
-                android:text="X" />
+                android:layout_height="@dimen/cell_size" />
 
             <View
                 android:layout_width="1dp"
@@ -84,8 +79,7 @@
                 android:id="@+id/cell23"
                 style="@style/TicTacToeText"
                 android:layout_width="@dimen/cell_size"
-                android:layout_height="@dimen/cell_size"
-                android:text="O" />
+                android:layout_height="@dimen/cell_size" />
 
         </LinearLayout>
 
@@ -102,8 +96,7 @@
                 android:id="@+id/cell31"
                 style="@style/TicTacToeText"
                 android:layout_width="@dimen/cell_size"
-                android:layout_height="@dimen/cell_size"
-                android:text="X" />
+                android:layout_height="@dimen/cell_size" />
 
             <View
                 android:layout_width="1dp"
@@ -114,8 +107,7 @@
                 android:id="@+id/cell32"
                 style="@style/TicTacToeText"
                 android:layout_width="@dimen/cell_size"
-                android:layout_height="@dimen/cell_size"
-                android:text="O" />
+                android:layout_height="@dimen/cell_size" />
 
             <View
                 android:layout_width="1dp"
@@ -126,8 +118,7 @@
                 android:id="@+id/cell33"
                 style="@style/TicTacToeText"
                 android:layout_width="@dimen/cell_size"
-                android:layout_height="@dimen/cell_size"
-                android:text="X" />
+                android:layout_height="@dimen/cell_size" />
 
         </LinearLayout>
 

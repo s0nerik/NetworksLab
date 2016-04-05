@@ -35,19 +35,50 @@ public class TicTacToeField extends LinearLayout {
 
     private void init() {
         View view = inflate(getContext(), R.layout.tictactoe_field, null);
+        this.cell11 = (TextView) view.findViewById(R.id.cell11);
+        this.cell12 = (TextView) view.findViewById(R.id.cell12);
+        this.cell13 = (TextView) view.findViewById(R.id.cell13);
+        this.cell21 = (TextView) view.findViewById(R.id.cell21);
+        this.cell22 = (TextView) view.findViewById(R.id.cell22);
+        this.cell23 = (TextView) view.findViewById(R.id.cell23);
+        this.cell31 = (TextView) view.findViewById(R.id.cell31);
+        this.cell32 = (TextView) view.findViewById(R.id.cell32);
+        this.cell33 = (TextView) view.findViewById(R.id.cell33);
         addView(view);
     }
 
-//    private void init() {
-//        inflate(getContext(), R.layout.tictactoe_field, this);
-//        this.cell11 = (TextView) findViewById(R.id.cell11);
-//        this.cell12 = (TextView) findViewById(R.id.cell12);
-//        this.cell13 = (TextView) findViewById(R.id.cell13);
-//        this.cell21 = (TextView) findViewById(R.id.cell21);
-//        this.cell22 = (TextView) findViewById(R.id.cell22);
-//        this.cell23 = (TextView) findViewById(R.id.cell23);
-//        this.cell31 = (TextView) findViewById(R.id.cell31);
-//        this.cell32 = (TextView) findViewById(R.id.cell32);
-//        this.cell33 = (TextView) findViewById(R.id.cell33);
-//    }
+    public void set(int x, int y, boolean value) {
+        String cell = x + "" + y;
+        String xo = value ? "O" : "X";
+        switch (cell) {
+            case "11":
+                cell11.setText(xo);
+                break;
+            case "12":
+                cell12.setText(xo);
+                break;
+            case "13":
+                cell13.setText(xo);
+                break;
+            case "21":
+                cell21.setText(xo);
+                break;
+            case "22":
+                cell22.setText(xo);
+                break;
+            case "23":
+                cell23.setText(xo);
+                break;
+            case "31":
+                cell31.setText(xo);
+                break;
+            case "32":
+                cell32.setText(xo);
+                break;
+            case "33":
+                cell33.setText(xo);
+                break;
+            default:
+        }
+    }
 }

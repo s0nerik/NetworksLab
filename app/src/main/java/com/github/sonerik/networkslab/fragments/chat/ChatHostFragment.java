@@ -8,6 +8,7 @@ import com.github.sonerik.networkslab.Constants;
 import com.github.sonerik.networkslab.adapters.chat_users.ChatUsersItem;
 import com.github.sonerik.networkslab.beans.ChatMessage;
 import com.github.sonerik.networkslab.beans.DeviceStatusChangedMessage;
+import com.github.sonerik.networkslab.beans.DevicesListMessage;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -28,6 +29,14 @@ public class ChatHostFragment extends ChatFragment {
 
             network.sendToAllDevices(msg,
                                      () -> Log.e(Constants.LOG_TAG, "Can't notify that new user has connected!"));
+
+            ChatMessage devicesMsg = new ChatMessage();
+            msg.nestedType = ChatMessage.NestedType.DEVICES_LIST;
+            msg.text = new DevicesListMessage(network.registeredClients).toJson();
+
+            network.sendToDevice(device,
+                                 devicesMsg,
+                                 () -> Log.e(Constants.LOG_TAG, "Can't notify new user about existing clients!"));
 
             users.add(new ChatUsersItem(device));
             usersAdapter.notifyDataSetChanged();

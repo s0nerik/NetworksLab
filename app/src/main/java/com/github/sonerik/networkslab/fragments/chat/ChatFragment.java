@@ -18,8 +18,10 @@ import com.github.sonerik.networkslab.adapters.chat_users.ChatUsersAdapter;
 import com.github.sonerik.networkslab.adapters.chat_users.ChatUsersItem;
 import com.github.sonerik.networkslab.beans.ChatMessage;
 import com.github.sonerik.networkslab.beans.DeviceStatusChangedMessage;
+import com.github.sonerik.networkslab.beans.DevicesListMessage;
 import com.github.sonerik.networkslab.events.ChatUserClickedEvent;
 import com.github.sonerik.networkslab.fragments.base.NetworkFragment;
+import com.peak.salut.SalutDevice;
 
 import org.greenrobot.eventbus.Subscribe;
 
@@ -111,6 +113,19 @@ public abstract class ChatFragment extends NetworkFragment {
                                 usersAdapter.notifyDataSetChanged();
                             }
                         }
+                    }
+                    break;
+                case DEVICES_LIST:
+                    val devicesListMsg = DevicesListMessage.fromJson(msg.text);
+                    if (devicesListMsg != null && devicesListMsg.devices != null) {
+                        for (SalutDevice device : devicesListMsg.devices) {
+                            if (device != null
+                                    && !device.deviceName.equals(network.thisDevice.deviceName)
+                                    && !device.readableName.equals(network.thisDevice.readableName)) {
+                                users.add(new ChatUsersItem(device));
+                            }
+                        }
+                        usersAdapter.notifyDataSetChanged();
                     }
                     break;
             }

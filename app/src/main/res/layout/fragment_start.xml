@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -15,6 +16,7 @@
 
     <Button
         android:id="@+id/btnChatClient"
+        android:layout_below="@+id/btnChatHost"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Chat Client"
@@ -22,6 +24,7 @@
 
     <Button
         android:id="@+id/btnTicTacToe"
+        android:layout_toRightOf="@+id/btnChatClient"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Tic-Tac-Toe"
@@ -29,9 +32,20 @@
 
     <Button
         android:id="@+id/btnDraw"
+        android:layout_toRightOf="@+id/btnTicTacToe"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Draw"
         />
 
-</LinearLayout>
+    <me.zhanghai.android.materialprogressbar.MaterialProgressBar
+        android:id="@+id/progressBar"
+        android:visibility="gone"
+        tools:visibility="visible"
+        android:indeterminate="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        />
+
+</RelativeLayout>

@@ -87,8 +87,10 @@ public abstract class ChatFragment extends NetworkFragment {
         if (msg != null) {
             switch (msg.nestedType) {
                 case NOT_NESTED:
-                    messages.add(new ChatMessageItem(msg));
-                    adapter.notifyDataSetChanged();
+                    if (!msg.author.readableName.equals(network.thisDevice.readableName)) {
+                        messages.add(new ChatMessageItem(msg));
+                        adapter.notifyDataSetChanged();
+                    }
                     break;
                 case DEVICE_STATUS_CHANGED:
                     val deviceStatusMsg = DeviceStatusChangedMessage.fromJson(msg.text);
@@ -112,6 +114,8 @@ public abstract class ChatFragment extends NetworkFragment {
                     }
                     break;
             }
+
+            onChatMessageReceived(msg);
         }
     }
 
@@ -138,4 +142,6 @@ public abstract class ChatFragment extends NetworkFragment {
     }
 
     protected abstract void send(ChatMessage msg);
+
+    protected void onChatMessageReceived(ChatMessage msg) {}
 }

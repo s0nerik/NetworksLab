@@ -64,6 +64,12 @@ public class ChatHostFragment extends ChatFragment {
     }
 
     @Override
+    protected void onChatMessageReceived(ChatMessage msg) {
+        super.onChatMessageReceived(msg);
+        send(msg);
+    }
+
+    @Override
     protected void send(ChatMessage msg) {
         if (msg.recipient != null) {
             network.sendToDevice(msg.recipient, msg, () -> Log.e(Constants.LOG_TAG, "Failed to send text!"));

@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/cell11"
+                style="@style/TicTacToeText"
+                android:layout_width="@dimen/cell_size"
+                android:layout_height="@dimen/cell_size" />
+
+            <View
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:background="#000" />
+
+            <TextView
+                android:id="@+id/cell12"
+                style="@style/TicTacToeText"
+                android:layout_width="@dimen/cell_size"
+                android:layout_height="@dimen/cell_size" />
+
+            <View
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:background="#000" />
+
+            <TextView
+                android:id="@+id/cell13"
+                style="@style/TicTacToeText"
+                android:layout_width="@dimen/cell_size"
+                android:layout_height="@dimen/cell_size" />
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#000" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/cell21"
+                style="@style/TicTacToeText"
+                android:layout_width="@dimen/cell_size"
+                android:layout_height="@dimen/cell_size" />
+
+            <View
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:background="#000" />
+
+            <TextView
+                android:id="@+id/cell22"
+                style="@style/TicTacToeText"
+                android:layout_width="@dimen/cell_size"
+                android:layout_height="@dimen/cell_size" />
+
+            <View
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:background="#000" />
+
+            <TextView
+                android:id="@+id/cell23"
+                style="@style/TicTacToeText"
+                android:layout_width="@dimen/cell_size"
+                android:layout_height="@dimen/cell_size" />
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#000" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/cell31"
+                style="@style/TicTacToeText"
+                android:layout_width="@dimen/cell_size"
+                android:layout_height="@dimen/cell_size" />
+
+            <View
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:background="#000" />
+
+            <TextView
+                android:id="@+id/cell32"
+                style="@style/TicTacToeText"
+                android:layout_width="@dimen/cell_size"
+                android:layout_height="@dimen/cell_size" />
+
+            <View
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:background="#000" />
+
+            <TextView
+                android:id="@+id/cell33"
+                style="@style/TicTacToeText"
+                android:layout_width="@dimen/cell_size"
+                android:layout_height="@dimen/cell_size" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>
+

@@ -18,7 +18,7 @@ import lombok.SneakyThrows;
 @JsonObject
 public class ChatMessage {
 
-    public enum NestedType { NOT_NESTED, DEVICE_CONNECTED }
+    public enum NestedType { NOT_NESTED, DEVICE_STATUS_CHANGED }
 
     public static class NestedTypeConverter extends StringBasedTypeConverter<NestedType> {
         @Override

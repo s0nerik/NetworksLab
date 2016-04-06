@@ -17,7 +17,7 @@ import com.github.sonerik.networkslab.adapters.chat_message.ChatMessageItem;
 import com.github.sonerik.networkslab.adapters.chat_users.ChatUsersAdapter;
 import com.github.sonerik.networkslab.adapters.chat_users.ChatUsersItem;
 import com.github.sonerik.networkslab.beans.ChatMessage;
-import com.github.sonerik.networkslab.beans.DeviceConnectedMessage;
+import com.github.sonerik.networkslab.beans.DeviceStatusChangedMessage;
 import com.github.sonerik.networkslab.events.ChatUserClickedEvent;
 import com.github.sonerik.networkslab.fragments.base.NetworkFragment;
 
@@ -90,13 +90,25 @@ public abstract class ChatFragment extends NetworkFragment {
                     messages.add(new ChatMessageItem(msg));
                     adapter.notifyDataSetChanged();
                     break;
-                case DEVICE_CONNECTED:
-                    val userConnectedMsg = DeviceConnectedMessage.fromJson(msg.text);
-                    if (userConnectedMsg != null
-                            && !userConnectedMsg.device.readableName.equals(network.thisDevice.readableName)
-                            && !userConnectedMsg.device.deviceName.equals(network.thisDevice.deviceName)) {
-                        users.add(new ChatUsersItem(userConnectedMsg.device));
-                        usersAdapter.notifyDataSetChanged();
+                case DEVICE_STATUS_CHANGED:
+                    val deviceStatusMsg = DeviceStatusChangedMessage.fromJson(msg.text);
+                    if (deviceStatusMsg != null
+                            && !deviceStatusMsg.device.readableName.equals(network.thisDevice.readableName)
+                            && !deviceStatusMsg.device.deviceName.equals(network.thisDevice.deviceName)) {
+                        if (deviceStatusMsg.isConnected) {
+                            Log.d(Constants.LOG_TAG, "User "+deviceStatusMsg.device.readableName+" has connected!");
+                            users.add(new ChatUsersItem(deviceStatusMsg.device));
+                            usersAdapter.notifyDataSetChanged();
+                        } else {
+                            Log.d(Constants.LOG_TAG, "User "+deviceStatusMsg.device.readableName+" has disconnected!");
+
+                            int deviceIndex = users.indexOf(new ChatUsersItem(deviceStatusMsg.device));
+
+                            if (deviceIndex >= 0) {
+                                users.remove(deviceIndex);
+                                usersAdapter.notifyDataSetChanged();
+                            }
+                        }
                     }
                     break;
             }
@@ -109,6 +121,7 @@ public abstract class ChatFragment extends NetworkFragment {
 
         // TODO: recipient chooser
         val msg = new ChatMessage();
+        msg.nestedType = ChatMessage.NestedType.NOT_NESTED;
         msg.text = editText.getText().toString();
         msg.author = network.thisDevice;
         msg.recipient = null;

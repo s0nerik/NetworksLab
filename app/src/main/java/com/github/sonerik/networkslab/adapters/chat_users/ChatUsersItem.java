@@ -12,6 +12,7 @@ import eu.davidea.flexibleadapter.FlexibleAdapter;
 import eu.davidea.flexibleadapter.items.AbstractFlexibleItem;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.val;
 
 @RequiredArgsConstructor
 public class ChatUsersItem extends AbstractFlexibleItem<ChatUsersViewHolder> {
@@ -36,7 +37,19 @@ public class ChatUsersItem extends AbstractFlexibleItem<ChatUsersViewHolder> {
 
     @Override
     public boolean equals(Object o) {
-        return device.equals(o);
+        if (o instanceof ChatUsersItem) {
+            val otherDevice = ((ChatUsersItem) o).getDevice();
+            if (otherDevice == null) {
+                return device == null;
+            } else {
+                return device.instanceName.equals(otherDevice.instanceName);
+            }
+        } else if (o instanceof SalutDevice) {
+            val otherDevice = (SalutDevice) o;
+            return device.instanceName.equals(otherDevice.instanceName);
+        } else {
+            return false;
+        }
     }
 
 }

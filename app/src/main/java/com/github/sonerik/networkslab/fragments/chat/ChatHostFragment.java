@@ -7,7 +7,7 @@ import android.util.Log;
 import com.github.sonerik.networkslab.Constants;
 import com.github.sonerik.networkslab.adapters.chat_users.ChatUsersItem;
 import com.github.sonerik.networkslab.beans.ChatMessage;
-import com.github.sonerik.networkslab.beans.DeviceConnectedMessage;
+import com.github.sonerik.networkslab.beans.DeviceStatusChangedMessage;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -23,14 +23,34 @@ public class ChatHostFragment extends ChatFragment {
             Log.d(Constants.LOG_TAG, "Device connected: "+device);
 
             ChatMessage msg = new ChatMessage();
-            msg.nestedType = ChatMessage.NestedType.DEVICE_CONNECTED;
-            msg.text = new DeviceConnectedMessage(device).toJson();
+            msg.nestedType = ChatMessage.NestedType.DEVICE_STATUS_CHANGED;
+            msg.text = new DeviceStatusChangedMessage(device, true).toJson();
 
             network.sendToAllDevices(msg,
                                      () -> Log.e(Constants.LOG_TAG, "Can't notify that new user has connected!"));
 
             users.add(new ChatUsersItem(device));
             usersAdapter.notifyDataSetChanged();
+        });
+
+        network.setOnDeviceUnregisteredCallback(salutDevice -> {
+            Log.d(Constants.LOG_TAG, "Device unregistered: "+salutDevice);
+
+            ChatMessage msg = new ChatMessage();
+            msg.nestedType = ChatMessage.NestedType.DEVICE_STATUS_CHANGED;
+            msg.text = new DeviceStatusChangedMessage(salutDevice, false).toJson();
+
+            network.sendToAllDevices(msg,
+                                     () -> Log.e(Constants.LOG_TAG, "Can't notify that new user has disconnected!"));
+
+            int deviceIndex = users.indexOf(new ChatUsersItem(salutDevice));
+
+            Log.d(Constants.LOG_TAG, "Unregistered device index: "+deviceIndex);
+
+            if (deviceIndex >= 0) {
+                users.remove(deviceIndex);
+                usersAdapter.notifyDataSetChanged();
+            }
         });
     }
 

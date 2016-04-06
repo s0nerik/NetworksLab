@@ -17,18 +17,21 @@ import lombok.SneakyThrows;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonObject
-public class DeviceConnectedMessage {
+public class DeviceStatusChangedMessage {
     @JsonField
     public SalutDevice device;
+
+    @JsonField
+    public boolean isConnected;
 
     @SneakyThrows
     public String toJson() {
         return LoganSquare.serialize(this);
     }
 
-    public static DeviceConnectedMessage fromJson(String json) {
+    public static DeviceStatusChangedMessage fromJson(String json) {
         try {
-            return LoganSquare.parse(json, DeviceConnectedMessage.class);
+            return LoganSquare.parse(json, DeviceStatusChangedMessage.class);
         } catch (IOException e) {
             Log.e(Constants.LOG_TAG, "Error while parsing ChatMessage", e);
             return null;

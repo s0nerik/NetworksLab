@@ -9,8 +9,13 @@ import com.github.sonerik.networkslab.adapters.chat_users.ChatUsersItem;
 import com.github.sonerik.networkslab.beans.ChatMessage;
 import com.github.sonerik.networkslab.beans.DeviceStatusChangedMessage;
 import com.github.sonerik.networkslab.beans.DevicesListMessage;
+import com.peak.salut.SalutDevice;
 
 import org.greenrobot.eventbus.EventBus;
+
+import java.util.concurrent.TimeUnit;
+
+import rx.Observable;
 
 public class ChatHostFragment extends ChatFragment {
 
@@ -27,16 +32,24 @@ public class ChatHostFragment extends ChatFragment {
             msg.nestedType = ChatMessage.NestedType.DEVICE_STATUS_CHANGED;
             msg.text = new DeviceStatusChangedMessage(device, true).toJson();
 
-            network.sendToAllDevices(msg,
-                                     () -> Log.e(Constants.LOG_TAG, "Can't notify that new user has connected!"));
+            for (SalutDevice client : network.registeredClients) {
+                if (!client.equals(device))
+                    network.sendToDevice(client,
+                                         msg,
+                                         () -> Log.e(Constants.LOG_TAG, "Can't notify ("+ client +") that new user has connected!"));
+            }
 
-            ChatMessage devicesMsg = new ChatMessage();
-            msg.nestedType = ChatMessage.NestedType.DEVICES_LIST;
-            msg.text = new DevicesListMessage(network.registeredClients).toJson();
+            Observable.timer(1, TimeUnit.SECONDS)
+                      .filter(aLong1 -> network.registeredClients.contains(device))
+                      .subscribe(aLong -> {
+                          ChatMessage devicesMsg = new ChatMessage();
+                          devicesMsg.nestedType = ChatMessage.NestedType.DEVICES_LIST;
+                          devicesMsg.text = new DevicesListMessage(network.registeredClients).toJson();
 
-            network.sendToDevice(device,
-                                 devicesMsg,
-                                 () -> Log.e(Constants.LOG_TAG, "Can't notify new user about existing clients!"));
+                          network.sendToDevice(device,
+                                               devicesMsg,
+                                               () -> Log.e(Constants.LOG_TAG, "Can't notify new user about existing clients!"));
+                      });
 
             users.add(new ChatUsersItem(device));
             usersAdapter.notifyDataSetChanged();

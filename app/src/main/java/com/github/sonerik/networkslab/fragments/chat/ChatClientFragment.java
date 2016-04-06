@@ -15,7 +15,6 @@ import com.github.sonerik.networkslab.fragments.ChooseDeviceFragment;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
-// TODO: unregister events, private rooms
 public class ChatClientFragment extends ChatFragment {
 
     @Override

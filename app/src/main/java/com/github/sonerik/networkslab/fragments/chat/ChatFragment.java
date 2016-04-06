@@ -26,7 +26,9 @@ import com.peak.salut.SalutDevice;
 import org.greenrobot.eventbus.Subscribe;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -47,6 +49,7 @@ public abstract class ChatFragment extends NetworkFragment {
     private SalutDevice lastSelectedRecipient = null;
 
     private List<ChatMessageItem> messages = new ArrayList<>();
+    private Map<SalutDevice, ChatMessage> privateMessages = new HashMap<>();
 //    private List<ChatMessageItem> displayedMessages = new ArrayList<>();
     private ChatMessageAdapter adapter = new ChatMessageAdapter(messages);
 
@@ -92,43 +95,27 @@ public abstract class ChatFragment extends NetworkFragment {
         if (msg != null) {
             switch (msg.nestedType) {
                 case NOT_NESTED:
-                    if (!msg.author.readableName.equals(network.thisDevice.readableName)) {
+                    if (!msg.author.equals(network.thisDevice)) {
                         messages.add(new ChatMessageItem(msg));
                         adapter.notifyDataSetChanged();
                     }
                     break;
                 case DEVICE_STATUS_CHANGED:
                     val deviceStatusMsg = DeviceStatusChangedMessage.fromJson(msg.text);
-                    if (deviceStatusMsg != null
-                            && !deviceStatusMsg.device.readableName.equals(network.thisDevice.readableName)
-                            && !deviceStatusMsg.device.deviceName.equals(network.thisDevice.deviceName)) {
+                    if (deviceStatusMsg != null && !deviceStatusMsg.device.equals(network.thisDevice)) {
                         if (deviceStatusMsg.isConnected) {
                             Log.d(Constants.LOG_TAG, "User "+deviceStatusMsg.device.readableName+" has connected!");
-                            users.add(new ChatUsersItem(deviceStatusMsg.device));
-                            usersAdapter.notifyDataSetChanged();
+                            addUser(deviceStatusMsg.device);
                         } else {
                             Log.d(Constants.LOG_TAG, "User "+deviceStatusMsg.device.readableName+" has disconnected!");
-
-                            int deviceIndex = users.indexOf(new ChatUsersItem(deviceStatusMsg.device));
-
-                            if (deviceIndex >= 0) {
-                                users.remove(deviceIndex);
-                                usersAdapter.notifyDataSetChanged();
-                            }
+                            removeUser(deviceStatusMsg.device);
                         }
                     }
                     break;
                 case DEVICES_LIST:
                     val devicesListMsg = DevicesListMessage.fromJson(msg.text);
                     if (devicesListMsg != null && devicesListMsg.devices != null) {
-                        for (SalutDevice device : devicesListMsg.devices) {
-                            if (device != null
-                                    && !device.deviceName.equals(network.thisDevice.deviceName)
-                                    && !device.readableName.equals(network.thisDevice.readableName)) {
-                                users.add(new ChatUsersItem(device));
-                            }
-                        }
-                        usersAdapter.notifyDataSetChanged();
+                        initUsersList(devicesListMsg.devices);
                     }
                     break;
             }
@@ -158,6 +145,29 @@ public abstract class ChatFragment extends NetworkFragment {
     public void onEvent(ChatUserClickedEvent e) {
         Log.d(Constants.LOG_TAG, "ChatUserClickedEvent: "+e.device);
         lastSelectedRecipient = e.device;
+    }
+
+    protected void initUsersList(List<SalutDevice> devices) {
+        for (SalutDevice device : devices) {
+            if (device != null && !device.equals(network.thisDevice)) {
+                users.add(new ChatUsersItem(device));
+            }
+        }
+        usersAdapter.notifyDataSetChanged();
+    }
+
+    protected void addUser(SalutDevice device) {
+        users.add(new ChatUsersItem(device));
+        usersAdapter.notifyDataSetChanged();
+    }
+
+    protected void removeUser(SalutDevice device) {
+        int deviceIndex = users.indexOf(new ChatUsersItem(device));
+
+        if (deviceIndex >= 0) {
+            users.remove(deviceIndex);
+            usersAdapter.notifyDataSetChanged();
+        }
     }
 
     protected abstract void send(ChatMessage msg);

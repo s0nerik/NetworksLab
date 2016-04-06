@@ -31,7 +31,7 @@ public class DevicesListMessage {
         try {
             return LoganSquare.parse(json, DevicesListMessage.class);
         } catch (IOException e) {
-            Log.e(Constants.LOG_TAG, "Error while parsing ChatMessage", e);
+            Log.e(Constants.LOG_TAG, "Error while parsing DevicesListMessage", e);
             return null;
         }
     }

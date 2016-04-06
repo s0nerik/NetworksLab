@@ -33,7 +33,7 @@ public class DeviceStatusChangedMessage {
         try {
             return LoganSquare.parse(json, DeviceStatusChangedMessage.class);
         } catch (IOException e) {
-            Log.e(Constants.LOG_TAG, "Error while parsing ChatMessage", e);
+            Log.e(Constants.LOG_TAG, "Error while parsing DeviceStatusChangedMessage", e);
             return null;
         }
     }

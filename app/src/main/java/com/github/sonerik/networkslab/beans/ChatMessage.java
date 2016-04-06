@@ -11,9 +11,13 @@ import com.peak.salut.SalutDevice;
 
 import java.io.IOException;
 
+import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import lombok.SneakyThrows;
 
+@AllArgsConstructor
+@NoArgsConstructor
 @EqualsAndHashCode
 @JsonObject
 public class ChatMessage {

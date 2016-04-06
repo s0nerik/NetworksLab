@@ -44,7 +44,10 @@ public abstract class ChatFragment extends NetworkFragment {
     @Bind(R.id.recycler_users)
     RecyclerView usersRecycler;
 
+    private SalutDevice lastSelectedRecipient = null;
+
     private List<ChatMessageItem> messages = new ArrayList<>();
+//    private List<ChatMessageItem> displayedMessages = new ArrayList<>();
     private ChatMessageAdapter adapter = new ChatMessageAdapter(messages);
 
     protected List<ChatUsersItem> users = new ArrayList<>();
@@ -154,6 +157,7 @@ public abstract class ChatFragment extends NetworkFragment {
     @Subscribe
     public void onEvent(ChatUserClickedEvent e) {
         Log.d(Constants.LOG_TAG, "ChatUserClickedEvent: "+e.device);
+        lastSelectedRecipient = e.device;
     }
 
     protected abstract void send(ChatMessage msg);

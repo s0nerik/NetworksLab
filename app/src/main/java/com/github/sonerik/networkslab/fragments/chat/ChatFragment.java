@@ -46,12 +46,12 @@ public abstract class ChatFragment extends NetworkFragment {
     @Bind(R.id.recycler_users)
     RecyclerView usersRecycler;
 
-    private SalutDevice lastSelectedRecipient = null;
+    private SalutDevice lastSelectedUser = null;
 
     private List<ChatMessageItem> messages = new ArrayList<>();
-    private Map<SalutDevice, ChatMessage> privateMessages = new HashMap<>();
-//    private List<ChatMessageItem> displayedMessages = new ArrayList<>();
-    private ChatMessageAdapter adapter = new ChatMessageAdapter(messages);
+    private List<ChatMessageItem> displayedMessages = new ArrayList<>();
+    private ChatMessageAdapter adapter = new ChatMessageAdapter(displayedMessages);
+    private Map<SalutDevice, List<ChatMessageItem>> privateMessages = new HashMap<>();
 
     protected List<ChatUsersItem> users = new ArrayList<>();
     protected ChatUsersAdapter usersAdapter = new ChatUsersAdapter(users);
@@ -96,8 +96,7 @@ public abstract class ChatFragment extends NetworkFragment {
             switch (msg.nestedType) {
                 case NOT_NESTED:
                     if (!msg.author.equals(network.thisDevice)) {
-                        messages.add(new ChatMessageItem(msg));
-                        adapter.notifyDataSetChanged();
+                        addMessage(msg);
                     }
                     break;
                 case DEVICE_STATUS_CHANGED:
@@ -133,24 +132,26 @@ public abstract class ChatFragment extends NetworkFragment {
         msg.nestedType = ChatMessage.NestedType.NOT_NESTED;
         msg.text = editText.getText().toString();
         msg.author = network.thisDevice;
-        msg.recipient = null;
+        msg.recipient = lastSelectedUser;
 
         send(msg);
 
-        messages.add(new ChatMessageItem(msg));
-        adapter.notifyDataSetChanged();
+        addMessage(msg);
     }
 
     @Subscribe
     public void onEvent(ChatUserClickedEvent e) {
         Log.d(Constants.LOG_TAG, "ChatUserClickedEvent: "+e.device);
-        lastSelectedRecipient = e.device;
+        lastSelectedUser = e.device;
+
+        displayUserMessages(lastSelectedUser);
     }
 
     protected void initUsersList(List<SalutDevice> devices) {
         for (SalutDevice device : devices) {
             if (device != null && !device.equals(network.thisDevice)) {
                 users.add(new ChatUsersItem(device));
+                privateMessages.put(device, new ArrayList<>());
             }
         }
         usersAdapter.notifyDataSetChanged();
@@ -159,6 +160,8 @@ public abstract class ChatFragment extends NetworkFragment {
     protected void addUser(SalutDevice device) {
         users.add(new ChatUsersItem(device));
         usersAdapter.notifyDataSetChanged();
+
+        privateMessages.put(device, new ArrayList<>());
     }
 
     protected void removeUser(SalutDevice device) {
@@ -167,7 +170,57 @@ public abstract class ChatFragment extends NetworkFragment {
         if (deviceIndex >= 0) {
             users.remove(deviceIndex);
             usersAdapter.notifyDataSetChanged();
+
+            privateMessages.remove(device);
         }
+    }
+
+    protected void addMessage(ChatMessage msg) {
+        if (msg.recipient == null) { // Someone is sending a message to everyone (public chat)
+            messages.add(new ChatMessageItem(msg));
+
+            displayMessageIfUserSelected(null, msg);
+        } else if (msg.recipient.equals(network.thisDevice)) { // Someone is sending a message to us (private chat)
+            List<ChatMessageItem> deviceMessages = privateMessages.get(msg.author);
+            if (deviceMessages == null) {
+                deviceMessages = new ArrayList<>();
+                privateMessages.put(msg.author, deviceMessages);
+            }
+            deviceMessages.add(new ChatMessageItem(msg));
+
+            displayMessageIfUserSelected(msg.author, msg);
+        } else if (msg.author.equals(network.thisDevice) && msg.recipient != null) { // We are sending a message to someone (private chat)
+            List<ChatMessageItem> deviceMessages = privateMessages.get(msg.recipient);
+            if (deviceMessages == null) {
+                deviceMessages = new ArrayList<>();
+                privateMessages.put(msg.recipient, deviceMessages);
+            }
+            deviceMessages.add(new ChatMessageItem(msg));
+
+            displayMessageIfUserSelected(msg.recipient, msg);
+        }
+    }
+
+    protected void displayMessageIfUserSelected(SalutDevice user, ChatMessage msg) {
+        if (lastSelectedUser != null && lastSelectedUser.equals(user) || lastSelectedUser == null && user == null) {
+            displayedMessages.add(new ChatMessageItem(msg));
+            adapter.notifyDataSetChanged();
+        }
+    }
+
+    protected void displayUserMessages(SalutDevice user) {
+        displayedMessages.clear();
+
+        if (user == null) {
+            displayedMessages.addAll(messages);
+        } else {
+            val userMessages = privateMessages.get(user);
+            if (userMessages != null) {
+                displayedMessages.addAll(userMessages);
+            }
+        }
+
+        adapter.notifyDataSetChanged();
     }
 
     protected abstract void send(ChatMessage msg);

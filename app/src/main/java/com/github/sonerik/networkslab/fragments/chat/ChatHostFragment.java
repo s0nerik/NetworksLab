@@ -93,8 +93,12 @@ public class ChatHostFragment extends ChatFragment {
 
     @Override
     protected void send(ChatMessage msg) {
-        if (msg.recipient != null) {
-            network.sendToDevice(msg.recipient, msg, () -> Log.e(Constants.LOG_TAG, "Failed to send text!"));
+        if (msg.recipients != null) {
+            for (SalutDevice recipient: msg.recipients) {
+                if (!network.thisDevice.equals(recipient)) {
+                    network.sendToDevice(recipient, msg, () -> Log.e(Constants.LOG_TAG, "Failed to send text!"));
+                }
+            }
         } else {
             network.sendToAllDevices(msg, () -> Log.e(Constants.LOG_TAG, "Failed to send text!"));
         }

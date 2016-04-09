@@ -132,7 +132,10 @@ public abstract class ChatFragment extends NetworkFragment {
         msg.nestedType = ChatMessage.NestedType.NOT_NESTED;
         msg.text = editText.getText().toString();
         msg.author = network.thisDevice;
-        msg.recipient = lastSelectedUser;
+        if (lastSelectedUser != null) {
+            msg.recipients = new ArrayList<>();
+            msg.recipients.add(lastSelectedUser);
+        }
 
         send(msg);
 
@@ -176,11 +179,11 @@ public abstract class ChatFragment extends NetworkFragment {
     }
 
     protected void addMessage(ChatMessage msg) {
-        if (msg.recipient == null) { // Someone is sending a message to everyone (public chat)
+        if (msg.recipients == null || msg.recipients.size() == 0 && msg.recipients.get(0) == null) { // Someone is sending a message to everyone (public chat)
             messages.add(new ChatMessageItem(msg));
 
             displayMessageIfUserSelected(null, msg);
-        } else if (msg.recipient.equals(network.thisDevice)) { // Someone is sending a message to us (private chat)
+        } else if (msg.recipients.contains(network.thisDevice)) { // Someone is sending a message to us (private chat)
             List<ChatMessageItem> deviceMessages = privateMessages.get(msg.author);
             if (deviceMessages == null) {
                 deviceMessages = new ArrayList<>();
@@ -189,15 +192,17 @@ public abstract class ChatFragment extends NetworkFragment {
             deviceMessages.add(new ChatMessageItem(msg));
 
             displayMessageIfUserSelected(msg.author, msg);
-        } else if (msg.author.equals(network.thisDevice) && msg.recipient != null) { // We are sending a message to someone (private chat)
-            List<ChatMessageItem> deviceMessages = privateMessages.get(msg.recipient);
-            if (deviceMessages == null) {
-                deviceMessages = new ArrayList<>();
-                privateMessages.put(msg.recipient, deviceMessages);
-            }
-            deviceMessages.add(new ChatMessageItem(msg));
+        } else if (msg.author.equals(network.thisDevice) && msg.recipients != null) { // We are sending a message to someone (private chat)
+            for (SalutDevice recipient : msg.recipients) {
+                List<ChatMessageItem> deviceMessages = privateMessages.get(recipient);
+                if (deviceMessages == null) {
+                    deviceMessages = new ArrayList<>();
+                    privateMessages.put(recipient, deviceMessages);
+                }
+                deviceMessages.add(new ChatMessageItem(msg));
 
-            displayMessageIfUserSelected(msg.recipient, msg);
+                displayMessageIfUserSelected(recipient, msg);
+            }
         }
     }
 

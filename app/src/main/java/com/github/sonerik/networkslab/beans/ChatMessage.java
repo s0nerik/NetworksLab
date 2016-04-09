@@ -10,6 +10,7 @@ import com.github.sonerik.networkslab.Constants;
 import com.peak.salut.SalutDevice;
 
 import java.io.IOException;
+import java.util.List;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -42,7 +43,7 @@ public class ChatMessage {
     public SalutDevice author;
 
     @JsonField
-    public SalutDevice recipient;
+    public List<SalutDevice> recipients;
 
     @JsonField(typeConverter = NestedTypeConverter.class)
     public NestedType nestedType;

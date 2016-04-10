@@ -33,7 +33,9 @@ import java.util.Map;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import eu.davidea.flexibleadapter.SelectableAdapter;
 import lombok.val;
+import rx.Observable;
 
 public abstract class ChatFragment extends NetworkFragment {
 
@@ -70,6 +72,7 @@ public abstract class ChatFragment extends NetworkFragment {
         recyclerView.setAdapter(adapter);
         ((LinearLayoutManager) recyclerView.getLayoutManager()).setStackFromEnd(true);
 
+        usersAdapter.setMode(SelectableAdapter.MODE_MULTI);
         usersRecycler.setAdapter(usersAdapter);
 
         users.add(new ChatUsersItem(null));
@@ -134,7 +137,9 @@ public abstract class ChatFragment extends NetworkFragment {
         msg.author = network.thisDevice;
         if (lastSelectedUser != null) {
             msg.recipients = new ArrayList<>();
-            msg.recipients.add(lastSelectedUser);
+            for (ChatUsersItem item : getSelectedRecipients()) {
+                msg.recipients.add(item.getDevice());
+            }
         }
 
         send(msg);
@@ -147,7 +152,14 @@ public abstract class ChatFragment extends NetworkFragment {
         Log.d(Constants.LOG_TAG, "ChatUserClickedEvent: "+e.device);
         lastSelectedUser = e.device;
 
-        displayUserMessages(lastSelectedUser);
+        if (lastSelectedUser == null) {
+            usersAdapter.clearSelection();
+        } else {
+            val pos = users.indexOf(new ChatUsersItem(e.device));
+            usersAdapter.toggleSelection(pos);
+            usersAdapter.notifyItemChanged(pos);
+        }
+        updateDisplayedMessages();
     }
 
     protected void initUsersList(List<SalutDevice> devices) {
@@ -179,7 +191,7 @@ public abstract class ChatFragment extends NetworkFragment {
     }
 
     protected void addMessage(ChatMessage msg) {
-        if (msg.recipients == null || msg.recipients.size() == 0 && msg.recipients.get(0) == null) { // Someone is sending a message to everyone (public chat)
+        if (msg.recipients == null || msg.recipients.size() == 0 || msg.recipients.get(0) == null) { // Someone is sending a message to everyone (public chat)
             messages.add(new ChatMessageItem(msg));
 
             displayMessageIfUserSelected(null, msg);
@@ -213,19 +225,33 @@ public abstract class ChatFragment extends NetworkFragment {
         }
     }
 
-    protected void displayUserMessages(SalutDevice user) {
+    protected void updateDisplayedMessages() {
         displayedMessages.clear();
 
-        if (user == null) {
+        if (usersAdapter.getSelectedItemCount() == 0) {
             displayedMessages.addAll(messages);
         } else {
-            val userMessages = privateMessages.get(user);
-            if (userMessages != null) {
-                displayedMessages.addAll(userMessages);
+            for (ChatUsersItem item : getSelectedRecipients()) {
+                val userMessages = privateMessages.get(item.getDevice());
+                if (userMessages != null) {
+                    for (ChatMessageItem msg : userMessages) {
+                        if (!displayedMessages.contains(msg)) {
+                            displayedMessages.add(msg);
+                        }
+                    }
+                }
             }
         }
 
         adapter.notifyDataSetChanged();
+    }
+
+    protected List<ChatUsersItem> getSelectedRecipients() {
+        return Observable.from(usersAdapter.getSelectedPositions())
+                         .map(i -> usersAdapter.getItem(i))
+                         .toList()
+                         .toBlocking()
+                         .first();
     }
 
     protected abstract void send(ChatMessage msg);

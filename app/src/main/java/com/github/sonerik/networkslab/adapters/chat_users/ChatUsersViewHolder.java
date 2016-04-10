@@ -40,6 +40,13 @@ public class ChatUsersViewHolder extends FlexibleViewHolder {
         } else {
             name.setText("All");
         }
+
+        if (mAdapter.isSelected(getFlexibleAdapterPosition())) {
+            name.setBackgroundResource(R.color.colorAccent);
+        } else {
+            name.setBackgroundDrawable(null);
+//            name.setBackgroundColor(Color.argb(0, 0, 0, 0));
+        }
     }
 
 }

@@ -8,12 +8,15 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RadioGroup;
 
 import com.f2prateek.rx.receivers.wifi.RxWifiManager;
 import com.github.sonerik.networkslab.R;
 import com.github.sonerik.networkslab.fragments.chat.ChatClientFragment;
 import com.github.sonerik.networkslab.fragments.chat.ChatHostFragment;
+import com.github.sonerik.networkslab.fragments.tic_tac_toe.TicTacToeClientFragment;
 import com.github.sonerik.networkslab.fragments.tic_tac_toe.TicTacToeFragment;
+import com.github.sonerik.networkslab.fragments.tic_tac_toe.TicTacToeHostFragment;
 
 import java.util.concurrent.TimeUnit;
 
@@ -25,11 +28,15 @@ import me.zhanghai.android.materialprogressbar.MaterialProgressBar;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action0;
+import rx.functions.Func0;
 
 public class StartFragment extends Fragment {
 
     @Bind(R.id.progressBar)
     MaterialProgressBar progressBar;
+
+    @Bind(R.id.hostClientSelector)
+    RadioGroup hostClientSelector;
 
     @Nullable
     @Override
@@ -43,31 +50,25 @@ public class StartFragment extends Fragment {
         ButterKnife.bind(this, view);
     }
 
-    @OnClick(R.id.btnChatClient)
-    public void onStartChatClient() {
-        toggleWifiAnd(() -> getActivity().getSupportFragmentManager()
-                                         .beginTransaction()
-                                         .replace(R.id.content, new ChatClientFragment())
-                                         .addToBackStack(null)
-                                         .commit());
-    }
-
-    @OnClick(R.id.btnChatHost)
-    public void onStartChatHost() {
-        toggleWifiAnd(() -> getActivity().getSupportFragmentManager()
-                                         .beginTransaction()
-                                         .replace(R.id.content, new ChatHostFragment())
-                                         .addToBackStack(null)
-                                         .commit());
+    @OnClick(R.id.btnChat)
+    public void onStartChat() {
+        show(ChatClientFragment::new, ChatHostFragment::new);
     }
 
     @OnClick(R.id.btnTicTacToe)
     public void onStartTicTacToe() {
-        getActivity().getSupportFragmentManager()
-                .beginTransaction()
-                .replace(R.id.content, new TicTacToeFragment())
-                .addToBackStack(null)
-                .commit();
+        show(TicTacToeClientFragment::new, TicTacToeHostFragment::new);
+    }
+
+    private void show(Func0<Fragment> clientFragmentCreator, Func0<Fragment> hostFragmentCreator) {
+        toggleWifiAnd(() ->
+                getActivity()
+                        .getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.content, isClient() ? clientFragmentCreator.call() : hostFragmentCreator.call())
+                        .addToBackStack(null)
+                        .commit()
+        );
     }
 
     private Observable<Void> toggleWiFi() {
@@ -100,6 +101,10 @@ public class StartFragment extends Fragment {
                     .doOnSubscribe(() -> progressBar.setVisibility(View.VISIBLE))
                     .doOnNext(v -> progressBar.setVisibility(View.GONE))
                     .subscribe(aVoid -> action.call());
+    }
+
+    private boolean isClient() {
+        return hostClientSelector.getCheckedRadioButtonId() == R.id.client;
     }
 
 }

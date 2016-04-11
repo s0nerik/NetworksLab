@@ -7,24 +7,36 @@
     android:layout_height="match_parent"
     >
 
-    <Button
-        android:id="@+id/btnChatHost"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Chat Host"
-        />
+    <RadioGroup
+        android:id="@+id/hostClientSelector"
+        android:checkedButton="@+id/client"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <RadioButton
+            android:id="@+id/host"
+            android:text="Host"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <RadioButton
+            android:id="@+id/client"
+            android:text="Client"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </RadioGroup>
 
     <Button
-        android:id="@+id/btnChatClient"
-        android:layout_below="@+id/btnChatHost"
+        android:id="@+id/btnChat"
+        android:layout_below="@+id/hostClientSelector"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Chat Client"
+        android:text="Chat"
         />
 
     <Button
         android:id="@+id/btnTicTacToe"
-        android:layout_toRightOf="@+id/btnChatClient"
+        android:layout_below="@+id/hostClientSelector"
+        android:layout_toRightOf="@+id/btnChat"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Tic-Tac-Toe"
@@ -32,10 +44,11 @@
 
     <Button
         android:id="@+id/btnDraw"
+        android:layout_below="@+id/hostClientSelector"
         android:layout_toRightOf="@+id/btnTicTacToe"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Draw"
+        android:text="Draw Client"
         />
 
     <me.zhanghai.android.materialprogressbar.MaterialProgressBar

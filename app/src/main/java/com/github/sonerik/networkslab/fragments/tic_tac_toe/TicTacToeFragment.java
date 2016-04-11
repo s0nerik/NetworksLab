@@ -32,8 +32,10 @@ public abstract class TicTacToeFragment extends NetworkFragment {
         ButterKnife.bind(this, view);
 
         field.setTest(true);
+        field.setAutoClearOnWin(true);
         field.setPlayerCellValue(getPlayerCellValue());
         field.setCellValueChangedListener(this::onCellValueChanged);
+        field.setGameWinnerListener(this::onGameWinnerAvailable);
     }
 
     @Override
@@ -55,4 +57,6 @@ public abstract class TicTacToeFragment extends NetworkFragment {
     protected abstract TicTacToeField.CellValue getPlayerCellValue();
 
     protected abstract void onCellValueChanged(int x, int y, TicTacToeField.CellValue v);
+
+    protected abstract void onGameWinnerAvailable(TicTacToeField.CellValue v);
 }

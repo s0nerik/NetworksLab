@@ -17,4 +17,9 @@ public class TicTacToeHostFragment extends TicTacToeFragment {
             Log.d(Constants.LOG_TAG, "Set new host value");
         }
     }
+
+    @Override
+    protected void onGameWinnerAvailable(TicTacToeField.CellValue v) {
+        Log.d(Constants.LOG_TAG, "Game winner: "+v);
+    }
 }

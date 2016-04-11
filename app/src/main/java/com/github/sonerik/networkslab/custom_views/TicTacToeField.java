@@ -15,13 +15,22 @@ public class TicTacToeField extends LinearLayout {
         void onCellValueChanged(int x, int y, CellValue value);
     }
 
+    public interface GameWinnerListener {
+        void onGameWon(CellValue value);
+    }
+
     private TextView[][] cells = new TextView[3][3];
+    private CellValue[][] cellVals = new CellValue[3][3];
+
     private CellValue playerCellValue = CellValue.X;
     private CellValue enemyCellValue = CellValue.O;
     private CellValue lastCellValue = CellValue.EMPTY;
+
     private CellValueChangedListener valueChangedListener;
+    private GameWinnerListener gameWinnerListener;
 
     private boolean test = false;
+    private boolean autoClearOnWin = false;
 
     public TicTacToeField(Context context) {
         super(context);
@@ -56,6 +65,12 @@ public class TicTacToeField extends LinearLayout {
             }
         }
 
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                cellVals[i][j] = CellValue.EMPTY;
+            }
+        }
+
         addView(view);
     }
 
@@ -80,11 +95,59 @@ public class TicTacToeField extends LinearLayout {
         }
     };
 
+    private CellValue getWinner() {
+        for (int i = 0; i < 3; i++) {
+            boolean allSameHor =   cellVals[i][0] == cellVals[i][1]
+                                && cellVals[i][1] == cellVals[i][2];
+
+            if (allSameHor && cellVals[i][0] != CellValue.EMPTY) {
+                return cellVals[i][0];
+            }
+
+            boolean allSameVert =  cellVals[0][i] == cellVals[1][i]
+                                && cellVals[1][i] == cellVals[2][i];
+
+            if (allSameVert && cellVals[0][i] != CellValue.EMPTY) {
+                return cellVals[0][i];
+            }
+        }
+
+        boolean allSameDiag1 = cellVals[0][0] == cellVals[1][1]
+                            && cellVals[1][1] == cellVals[2][2];
+
+        if (allSameDiag1 && cellVals[0][0] != CellValue.EMPTY) {
+            return cellVals[0][0];
+        }
+
+        boolean allSameDiag2 = cellVals[2][0] == cellVals[1][1]
+                            && cellVals[0][2] == cellVals[1][1];
+
+        if (allSameDiag2 && cellVals[2][0] != CellValue.EMPTY) {
+            return cellVals[2][0];
+        }
+
+        return CellValue.EMPTY;
+    }
+
     public void set(int x, int y, CellValue value) {
+        set(x, y, value, true, true);
+    }
+
+    private void set(int x, int y, CellValue value, boolean notifyValueChanged, boolean notifyWinner) {
+        cellVals[x][y] = value;
         cells[x][y].setText(value == CellValue.EMPTY ? "" : value.toString());
 
-        if (valueChangedListener != null)
+        if (valueChangedListener != null && notifyValueChanged)
             valueChangedListener.onCellValueChanged(x, y, value);
+
+        CellValue winner = getWinner();
+        if (winner != CellValue.EMPTY) {
+            if (gameWinnerListener != null && notifyWinner)
+                gameWinnerListener.onGameWon(winner);
+
+            if (autoClearOnWin && notifyWinner)
+                clearAll();
+        }
 
         lastCellValue = value;
     }
@@ -98,6 +161,14 @@ public class TicTacToeField extends LinearLayout {
         this.valueChangedListener = valueChangedListener;
     }
 
+    public void setGameWinnerListener(GameWinnerListener gameWinnerListener) {
+        this.gameWinnerListener = gameWinnerListener;
+    }
+
+    public void setAutoClearOnWin(boolean autoClearOnWin) {
+        this.autoClearOnWin = autoClearOnWin;
+    }
+
     public void setTest(boolean test) {
         this.test = test;
     }
@@ -105,7 +176,7 @@ public class TicTacToeField extends LinearLayout {
     public void clearAll() {
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
-                set(i, j, CellValue.EMPTY);
+                set(i, j, CellValue.EMPTY, true, false);
             }
         }
     }

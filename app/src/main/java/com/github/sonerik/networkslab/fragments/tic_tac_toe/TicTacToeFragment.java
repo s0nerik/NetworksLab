@@ -1,4 +1,4 @@
-package com.github.sonerik.networkslab.fragments;
+package com.github.sonerik.networkslab.fragments.tic_tac_toe;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;

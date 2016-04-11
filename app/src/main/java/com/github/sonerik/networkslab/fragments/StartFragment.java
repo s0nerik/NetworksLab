@@ -13,6 +13,7 @@ import com.f2prateek.rx.receivers.wifi.RxWifiManager;
 import com.github.sonerik.networkslab.R;
 import com.github.sonerik.networkslab.fragments.chat.ChatClientFragment;
 import com.github.sonerik.networkslab.fragments.chat.ChatHostFragment;
+import com.github.sonerik.networkslab.fragments.tic_tac_toe.TicTacToeFragment;
 
 import java.util.concurrent.TimeUnit;
 

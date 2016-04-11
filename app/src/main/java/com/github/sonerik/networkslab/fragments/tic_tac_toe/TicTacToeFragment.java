@@ -31,6 +31,7 @@ public abstract class TicTacToeFragment extends NetworkFragment {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
 
+        field.setTest(true);
         field.setPlayerCellValue(getPlayerCellValue());
         field.setCellValueChangedListener(this::onCellValueChanged);
     }

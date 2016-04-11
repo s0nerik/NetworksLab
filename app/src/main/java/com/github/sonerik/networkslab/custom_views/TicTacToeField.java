@@ -17,7 +17,11 @@ public class TicTacToeField extends LinearLayout {
 
     private TextView[][] cells = new TextView[3][3];
     private CellValue playerCellValue = CellValue.X;
+    private CellValue enemyCellValue = CellValue.O;
+    private CellValue lastCellValue = CellValue.EMPTY;
     private CellValueChangedListener valueChangedListener;
+
+    private boolean test = false;
 
     public TicTacToeField(Context context) {
         super(context);
@@ -60,22 +64,50 @@ public class TicTacToeField extends LinearLayout {
         int y = Character.getNumericValue(v.getTag().toString().charAt(1));
         boolean isEmpty = cells[x][y].getText().length() == 0;
 
-        set(x, y, isEmpty ? playerCellValue : CellValue.EMPTY);
+        if (isEmpty) {
+            if (test) {
+                if (lastCellValue == playerCellValue) {
+                    set(x, y, enemyCellValue);
+                } else {
+                    set(x, y, playerCellValue);
+                }
+                return;
+            }
+
+            if (lastCellValue == enemyCellValue) {
+                set(x, y, playerCellValue);
+            }
+        }
     };
 
-    private void set(int x, int y, CellValue value) {
+    public void set(int x, int y, CellValue value) {
         cells[x][y].setText(value == CellValue.EMPTY ? "" : value.toString());
 
         if (valueChangedListener != null)
             valueChangedListener.onCellValueChanged(x, y, value);
+
+        lastCellValue = value;
     }
 
     public void setPlayerCellValue(CellValue playerCellValue) {
         this.playerCellValue = playerCellValue;
+        enemyCellValue = playerCellValue == CellValue.X ? CellValue.O : CellValue.X;
     }
 
     public void setCellValueChangedListener(CellValueChangedListener valueChangedListener) {
         this.valueChangedListener = valueChangedListener;
+    }
+
+    public void setTest(boolean test) {
+        this.test = test;
+    }
+
+    public void clearAll() {
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                set(i, j, CellValue.EMPTY);
+            }
+        }
     }
 
 }

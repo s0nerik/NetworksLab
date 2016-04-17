@@ -20,6 +20,8 @@ public class DrawByFingerCanvas extends View {
     private Paint brush = new Paint(Paint.ANTI_ALIAS_FLAG);
     private Path path = new Path();
 
+    private float density;
+
     public DrawByFingerCanvas(Context context) {
         super(context);
         init();
@@ -40,6 +42,8 @@ public class DrawByFingerCanvas extends View {
 
         brush.setStyle(Paint.Style.STROKE);
         brush.setStrokeWidth(5);
+
+        density = getResources().getDisplayMetrics().density;
     }
 
     public Observable<Point> getPointsObservable() {
@@ -54,8 +58,8 @@ public class DrawByFingerCanvas extends View {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         Point p = new Point();
-        p.x = event.getX();
-        p.y = event.getY();
+        p.x = event.getX() / density;
+        p.y = event.getY() / density;
 
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
@@ -77,10 +81,10 @@ public class DrawByFingerCanvas extends View {
     public void addPoint(Point p) {
         switch (p.type) {
             case DOWN:
-                path.moveTo(p.x,p.y);
+                path.moveTo(p.x * density,p.y * density);
                 break;
             case MOVE:
-                path.lineTo(p.x, p.y);
+                path.lineTo(p.x * density, p.y * density);
                 break;
         }
 

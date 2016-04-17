@@ -39,6 +39,8 @@ public class TicTacToeField extends LinearLayout {
     private boolean test = false;
     private boolean autoClearOnWin = false;
 
+    private boolean waitingForWinnerNotification = false;
+
     public TicTacToeField(Context context) {
         super(context);
         init();
@@ -86,7 +88,7 @@ public class TicTacToeField extends LinearLayout {
         int y = Character.getNumericValue(v.getTag().toString().charAt(1));
         boolean isEmpty = cells[x][y].getText().length() == 0;
 
-        if (isEmpty) {
+        if (isEmpty && !waitingForWinnerNotification) {
             if (test) {
                 if (lastCellValue == playerCellValue) {
                     set(x, y, enemyCellValue);
@@ -152,6 +154,8 @@ public class TicTacToeField extends LinearLayout {
             if (notifyWinner) {
                 if (gameWinnerListener != null) {
                     Observable.timer(winnerNotifyDelay, TimeUnit.MILLISECONDS)
+                              .doOnSubscribe(() -> waitingForWinnerNotification = true)
+                              .doOnNext(aLong -> waitingForWinnerNotification = false)
                               .observeOn(AndroidSchedulers.mainThread())
                               .subscribe(aLong -> {
                                   if (autoClearOnWin) clearAll();

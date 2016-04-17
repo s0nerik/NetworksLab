@@ -25,25 +25,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
-    <LinearLayout
-        android:id="@+id/waiting"
-        android:visibility="gone"
-        android:layout_centerInParent="true"
-        android:orientation="vertical"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
-
-        <TextView
-            android:text="Waiting for another player..."
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-        <me.zhanghai.android.materialprogressbar.MaterialProgressBar
-            android:layout_gravity="center_horizontal"
-            android:indeterminate="true"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-    </LinearLayout>
+    <include layout="@layout/layout_waiting" />
 
 </RelativeLayout>

@@ -14,8 +14,9 @@ import com.f2prateek.rx.receivers.wifi.RxWifiManager;
 import com.github.sonerik.networkslab.R;
 import com.github.sonerik.networkslab.fragments.chat.ChatClientFragment;
 import com.github.sonerik.networkslab.fragments.chat.ChatHostFragment;
+import com.github.sonerik.networkslab.fragments.draw.DrawClientFragment;
+import com.github.sonerik.networkslab.fragments.draw.DrawHostFragment;
 import com.github.sonerik.networkslab.fragments.tic_tac_toe.TicTacToeClientFragment;
-import com.github.sonerik.networkslab.fragments.tic_tac_toe.TicTacToeFragment;
 import com.github.sonerik.networkslab.fragments.tic_tac_toe.TicTacToeHostFragment;
 
 import java.util.concurrent.TimeUnit;
@@ -58,6 +59,11 @@ public class StartFragment extends Fragment {
     @OnClick(R.id.btnTicTacToe)
     public void onStartTicTacToe() {
         show(TicTacToeClientFragment::new, TicTacToeHostFragment::new);
+    }
+
+    @OnClick(R.id.btnDraw)
+    public void onStartDraw() {
+        show(DrawClientFragment::new, DrawHostFragment::new);
     }
 
     private void show(Func0<Fragment> clientFragmentCreator, Func0<Fragment> hostFragmentCreator) {

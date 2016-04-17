@@ -46,5 +46,5 @@ dependencies {
     compile 'io.reactivex:rxandroid:1.1.0'
     compile 'com.f2prateek.rx.receivers:rx-receivers:0.1.0-SNAPSHOT'
 
-    compile 'me.zhanghai.android.materialprogressbar:library:1.1.5'
+    compile 'me.zhanghai.android.materialprogressbar:library:1.1.6'
 }

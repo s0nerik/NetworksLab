@@ -1,7 +1,5 @@
 package com.github.sonerik.networkslab.beans.tic_tac_toe;
 
-import android.util.Log;
-
 import com.bluelinelabs.logansquare.LoganSquare;
 import com.bluelinelabs.logansquare.annotation.JsonField;
 import com.bluelinelabs.logansquare.annotation.JsonObject;
@@ -11,7 +9,9 @@ import com.github.sonerik.networkslab.custom_views.TicTacToeField;
 import java.io.IOException;
 
 import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 
+@NoArgsConstructor
 @AllArgsConstructor
 @JsonObject
 public class TicTacToeMessage {

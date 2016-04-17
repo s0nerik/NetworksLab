@@ -3,6 +3,22 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <TextView
+        android:id="@+id/winner_label"
+        android:text="Last winner: "
+        android:layout_marginTop="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/winner"
+        android:layout_toRightOf="@+id/winner_label"
+        android:layout_alignBaseline="@+id/winner_label"
+        android:text="Unknown"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
     <com.github.sonerik.networkslab.custom_views.TicTacToeField
         android:id="@+id/field"
         android:layout_centerInParent="true"
@@ -11,6 +27,7 @@
 
     <LinearLayout
         android:id="@+id/waiting"
+        android:visibility="gone"
         android:layout_centerInParent="true"
         android:orientation="vertical"
         android:layout_width="wrap_content"
@@ -22,6 +39,8 @@
             android:layout_height="wrap_content" />
 
         <me.zhanghai.android.materialprogressbar.MaterialProgressBar
+            android:layout_gravity="center_horizontal"
+            android:indeterminate="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 

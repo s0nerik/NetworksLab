@@ -21,8 +21,8 @@ public class TicTacToeHostFragment extends TicTacToeFragment {
     private SalutDevice otherPlayer;
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
 
         waiting.setVisibility(View.VISIBLE);
         field.setVisibility(View.GONE);

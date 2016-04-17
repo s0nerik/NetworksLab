@@ -2,11 +2,11 @@ package com.github.sonerik.networkslab.fragments.tic_tac_toe;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.github.sonerik.networkslab.Constants;
 import com.github.sonerik.networkslab.R;
@@ -22,6 +22,9 @@ public abstract class TicTacToeFragment extends NetworkFragment {
     @Bind(R.id.field)
     TicTacToeField field;
 
+    @Bind(R.id.winner)
+    TextView winner;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -34,10 +37,14 @@ public abstract class TicTacToeFragment extends NetworkFragment {
         ButterKnife.bind(this, view);
 
 //        field.setTest(true);
+        field.setWinnerNotifyDelay(2000);
         field.setAutoClearOnWin(true);
         field.setPlayerCellValue(getPlayerCellValue());
         field.setCellValueChangedListener(this::onCellValueChanged);
-        field.setGameWinnerListener(this::onGameWinnerAvailable);
+        field.setGameWinnerListener(w -> {
+            winner.setText(w.toString());
+            onGameWinnerAvailable(w);
+        });
     }
 
     @Override

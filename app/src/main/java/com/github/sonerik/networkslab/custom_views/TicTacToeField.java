@@ -8,6 +8,11 @@ import android.widget.TextView;
 
 import com.github.sonerik.networkslab.R;
 
+import java.util.concurrent.TimeUnit;
+
+import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
+
 public class TicTacToeField extends LinearLayout {
     public enum CellValue { EMPTY, X, O }
 
@@ -28,6 +33,8 @@ public class TicTacToeField extends LinearLayout {
 
     private CellValueChangedListener valueChangedListener;
     private GameWinnerListener gameWinnerListener;
+
+    private int winnerNotifyDelay = 0;
 
     private boolean test = false;
     private boolean autoClearOnWin = false;
@@ -89,7 +96,7 @@ public class TicTacToeField extends LinearLayout {
                 return;
             }
 
-            if (lastCellValue == enemyCellValue) {
+            if (lastCellValue != playerCellValue) {
                 set(x, y, playerCellValue);
             }
         }
@@ -142,11 +149,18 @@ public class TicTacToeField extends LinearLayout {
 
         CellValue winner = getWinner();
         if (winner != CellValue.EMPTY) {
-            if (gameWinnerListener != null && notifyWinner)
-                gameWinnerListener.onGameWon(winner);
-
-            if (autoClearOnWin && notifyWinner)
-                clearAll();
+            if (notifyWinner) {
+                if (gameWinnerListener != null) {
+                    Observable.timer(winnerNotifyDelay, TimeUnit.MILLISECONDS)
+                              .observeOn(AndroidSchedulers.mainThread())
+                              .subscribe(aLong -> {
+                                  if (autoClearOnWin) clearAll();
+                                  gameWinnerListener.onGameWon(winner);
+                              });
+                } else {
+                    if (autoClearOnWin) clearAll();
+                }
+            }
         }
 
         lastCellValue = value;
@@ -163,6 +177,10 @@ public class TicTacToeField extends LinearLayout {
 
     public void setGameWinnerListener(GameWinnerListener gameWinnerListener) {
         this.gameWinnerListener = gameWinnerListener;
+    }
+
+    public void setWinnerNotifyDelay(int winnerNotifyDelay) {
+        this.winnerNotifyDelay = winnerNotifyDelay;
     }
 
     public void setAutoClearOnWin(boolean autoClearOnWin) {

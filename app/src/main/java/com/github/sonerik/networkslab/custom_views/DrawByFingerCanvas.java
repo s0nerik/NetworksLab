@@ -89,5 +89,6 @@ public class DrawByFingerCanvas extends View {
 
     public void clear() {
         path.reset();
+        invalidate();
     }
 }

@@ -2,6 +2,7 @@ package com.github.sonerik.networkslab.fragments.draw;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,12 +18,16 @@ import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import lombok.val;
 import rx.Subscription;
 
 public abstract class DrawFragment extends NetworkFragment {
     @Bind(R.id.canvas)
     DrawByFingerCanvas canvas;
+
+    @Bind(R.id.drawArea)
+    View drawArea;
 
     private Subscription pointsSubscription;
 
@@ -67,6 +72,13 @@ public abstract class DrawFragment extends NetworkFragment {
                     break;
             }
         }
+    }
+
+    @OnClick(R.id.btnClear)
+    public void onClear() {
+        Log.d(Constants.LOG_TAG, "onClear");
+        canvas.clear();
+        onCanvasCleared();
     }
 
     @Override

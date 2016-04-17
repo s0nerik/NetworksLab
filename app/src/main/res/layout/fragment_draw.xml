@@ -4,11 +4,25 @@
               android:layout_width="match_parent"
               android:layout_height="match_parent">
 
-    <com.github.sonerik.networkslab.custom_views.DrawByFingerCanvas
-        android:id="@+id/canvas"
+    <RelativeLayout
+        android:id="@+id/drawArea"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        />
+        >
+        <Button
+            android:id="@+id/btnClear"
+            android:text="Clear"
+            android:layout_alignParentRight="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            />
+
+        <com.github.sonerik.networkslab.custom_views.DrawByFingerCanvas
+            android:id="@+id/canvas"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            />
+    </RelativeLayout>
 
     <include layout="@layout/layout_waiting" />
 

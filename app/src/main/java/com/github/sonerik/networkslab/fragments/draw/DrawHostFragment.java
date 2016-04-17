@@ -27,10 +27,10 @@ public class DrawHostFragment extends DrawFragment {
         super.onViewCreated(view, savedInstanceState);
 
         waiting.setVisibility(View.VISIBLE);
-        canvas.setVisibility(View.GONE);
+        drawArea.setVisibility(View.GONE);
         network.startNetworkService(salutDevice -> {
             waiting.setVisibility(View.GONE);
-            canvas.setVisibility(View.VISIBLE);
+            drawArea.setVisibility(View.VISIBLE);
 
             otherDevice = salutDevice;
         });

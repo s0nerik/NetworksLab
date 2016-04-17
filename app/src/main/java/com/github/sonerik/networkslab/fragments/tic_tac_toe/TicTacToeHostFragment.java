@@ -35,6 +35,13 @@ public class TicTacToeHostFragment extends TicTacToeFragment {
     }
 
     @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        network.stopNetworkService(true);
+    }
+
+    @Override
     protected TicTacToeField.CellValue getPlayerCellValue() {
         return TicTacToeField.CellValue.X;
     }

@@ -10,11 +10,13 @@ import android.view.ViewGroup;
 
 import com.github.sonerik.networkslab.Constants;
 import com.github.sonerik.networkslab.R;
+import com.github.sonerik.networkslab.beans.tic_tac_toe.TicTacToeMessage;
 import com.github.sonerik.networkslab.custom_views.TicTacToeField;
 import com.github.sonerik.networkslab.fragments.base.NetworkFragment;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import lombok.val;
 
 public abstract class TicTacToeFragment extends NetworkFragment {
     @Bind(R.id.field)
@@ -31,7 +33,7 @@ public abstract class TicTacToeFragment extends NetworkFragment {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
 
-        field.setTest(true);
+//        field.setTest(true);
         field.setAutoClearOnWin(true);
         field.setPlayerCellValue(getPlayerCellValue());
         field.setCellValueChangedListener(this::onCellValueChanged);
@@ -42,6 +44,20 @@ public abstract class TicTacToeFragment extends NetworkFragment {
     public void onDestroyView() {
         ButterKnife.unbind(this);
         super.onDestroyView();
+    }
+
+    @Override
+    public void onDataReceived(Object o) {
+        super.onDataReceived(o);
+
+        val msg = TicTacToeMessage.fromJson((String)o);
+        if (msg != null) {
+            if (msg.type == TicTacToeMessage.Type.CELL_VALUE) {
+                field.set(msg.x, msg.y, msg.value);
+            } else if (msg.type == TicTacToeMessage.Type.WINNER) {
+                Log.d(Constants.LOG_TAG, "Winner: "+msg.value);
+            }
+        }
     }
 
     @Override

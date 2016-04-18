@@ -5,9 +5,11 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
+import com.github.sonerik.networkslab.Constants;
 import com.github.sonerik.networkslab.beans.draw.Point;
 
 import rx.Observable;
@@ -79,6 +81,7 @@ public class DrawByFingerCanvas extends View {
     }
 
     public void addPoint(Point p) {
+        Log.d(Constants.LOG_TAG, "addPoint("+p.type+"): "+p.x+", "+p.y);
         switch (p.type) {
             case DOWN:
                 path.moveTo(p.x * density,p.y * density);

@@ -12,6 +12,8 @@ import android.view.View;
 import com.github.sonerik.networkslab.Constants;
 import com.github.sonerik.networkslab.beans.draw.Point;
 
+import java.util.TreeSet;
+
 import rx.Observable;
 import rx.subjects.PublishSubject;
 
@@ -23,6 +25,9 @@ public class DrawByFingerCanvas extends View {
     private Path path = new Path();
 
     private float density;
+
+    private TreeSet<Point> pointsQueue = new TreeSet<>((lhs, rhs) -> lhs.index - rhs.index);
+    private int lastAddedPointIndex = -1;
 
     public DrawByFingerCanvas(Context context) {
         super(context);
@@ -74,6 +79,8 @@ public class DrawByFingerCanvas extends View {
                 return false;
         }
 
+        p.index = lastAddedPointIndex+1;
+
         addPoint(p);
         pointsSubject.onNext(p);
 
@@ -81,17 +88,27 @@ public class DrawByFingerCanvas extends View {
     }
 
     public void addPoint(Point p) {
-        Log.d(Constants.LOG_TAG, "addPoint("+p.type+"): "+p.x+", "+p.y);
-        switch (p.type) {
-            case DOWN:
-                path.moveTo(p.x * density,p.y * density);
-                break;
-            case MOVE:
-                path.lineTo(p.x * density, p.y * density);
-                break;
-        }
+        Log.d(Constants.LOG_TAG, "addPoint::"+p.index+"::("+p.type+"): "+p.x+", "+p.y);
+        if (p.index == lastAddedPointIndex + 1) {
+            switch (p.type) {
+                case DOWN:
+                    path.moveTo(p.x * density,p.y * density);
+                    break;
+                case MOVE:
+                    path.lineTo(p.x * density, p.y * density);
+                    break;
+            }
 
-        invalidate();
+            if (pointsQueue.size() > 0 && pointsQueue.first().index == lastAddedPointIndex + 1) {
+                addPoint(pointsQueue.pollFirst());
+            }
+
+            lastAddedPointIndex++;
+
+            invalidate();
+        } else {
+            pointsQueue.add(p);
+        }
     }
 
     public void clear() {

@@ -4,8 +4,10 @@ import com.bluelinelabs.logansquare.annotation.JsonField;
 import com.bluelinelabs.logansquare.annotation.JsonObject;
 
 import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+@EqualsAndHashCode
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonObject
@@ -14,6 +16,8 @@ public class Point {
 
     @JsonField(typeConverter = PointTypeConverter.class)
     public Type type;
+    @JsonField
+    public int index;
     @JsonField
     public float x;
     @JsonField

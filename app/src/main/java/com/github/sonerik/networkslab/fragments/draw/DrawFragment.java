@@ -43,7 +43,8 @@ public abstract class DrawFragment extends NetworkFragment {
         ButterKnife.bind(this, view);
 
         pointsSubscription = canvas.getPointsObservable()
-                                   .buffer(4)
+                                   .buffer(1)
+                                   .onBackpressureBuffer()
                                    .subscribe(this::onNewPointsBufferAvailable);
     }
 

@@ -5,11 +5,9 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
-import com.github.sonerik.networkslab.Constants;
 import com.github.sonerik.networkslab.beans.draw.Point;
 
 import java.util.TreeSet;
@@ -26,7 +24,7 @@ public class DrawByFingerCanvas extends View {
 
     private float density;
 
-    private TreeSet<Point> pointsQueue = new TreeSet<>((lhs, rhs) -> lhs.index - rhs.index);
+    private TreeSet<Point> points = new TreeSet<>((lhs, rhs) -> lhs.index - rhs.index);
     private int lastAddedPointIndex = -1;
 
     public DrawByFingerCanvas(Context context) {
@@ -88,30 +86,27 @@ public class DrawByFingerCanvas extends View {
     }
 
     public void addPoint(Point p) {
-        Log.d(Constants.LOG_TAG, "addPoint::"+p.index+"::("+p.type+"): "+p.x+", "+p.y);
-        if (p.index == lastAddedPointIndex + 1) {
-            switch (p.type) {
+        points.add(p);
+
+        if (!points.isEmpty() && points.last().index > lastAddedPointIndex)
+            lastAddedPointIndex = points.last().index;
+
+        path.reset();
+        for (Point point : points) {
+            switch (point.type) {
                 case DOWN:
-                    path.moveTo(p.x * density,p.y * density);
+                    path.moveTo(point.x * density, point.y * density);
                     break;
                 case MOVE:
-                    path.lineTo(p.x * density, p.y * density);
+                    path.lineTo(point.x * density, point.y * density);
                     break;
             }
-
-            if (pointsQueue.size() > 0 && pointsQueue.first().index == lastAddedPointIndex + 1) {
-                addPoint(pointsQueue.pollFirst());
-            }
-
-            lastAddedPointIndex++;
-
-            invalidate();
-        } else {
-            pointsQueue.add(p);
         }
+        invalidate();
     }
 
     public void clear() {
+        points.clear();
         path.reset();
         invalidate();
     }

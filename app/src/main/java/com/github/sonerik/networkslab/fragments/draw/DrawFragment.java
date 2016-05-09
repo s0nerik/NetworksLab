@@ -13,6 +13,9 @@ import com.github.sonerik.networkslab.beans.draw.DrawMessage;
 import com.github.sonerik.networkslab.beans.draw.Point;
 import com.github.sonerik.networkslab.custom_views.DrawByFingerCanvas;
 import com.github.sonerik.networkslab.fragments.base.NetworkFragment;
+import com.pavelsikun.vintagechroma.ChromaDialog;
+import com.pavelsikun.vintagechroma.IndicatorMode;
+import com.pavelsikun.vintagechroma.colormode.ColorMode;
 
 import java.util.List;
 
@@ -80,6 +83,17 @@ public abstract class DrawFragment extends NetworkFragment {
         Log.d(Constants.LOG_TAG, "onClear");
         canvas.clear();
         onCanvasCleared();
+    }
+
+    @OnClick(R.id.btnSelectColor)
+    public void onSelectColor() {
+        new ChromaDialog.Builder()
+                .initialColor(canvas.getSelectedColor())
+                .colorMode(ColorMode.RGB) // RGB, ARGB, HVS, CMYK, CMYK255, HSL
+                .indicatorMode(IndicatorMode.DECIMAL)
+                .onColorSelected(color -> canvas.setSelectedColor(color))
+                .create()
+                .show(getChildFragmentManager(), "ChromaDialog");
     }
 
     @Override

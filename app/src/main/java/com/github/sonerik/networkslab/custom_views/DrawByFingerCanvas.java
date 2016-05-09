@@ -2,14 +2,18 @@ package com.github.sonerik.networkslab.custom_views;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.support.v4.util.Pair;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 
 import com.github.sonerik.networkslab.beans.draw.Point;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.TreeSet;
 
 import rx.Observable;
@@ -20,12 +24,15 @@ public class DrawByFingerCanvas extends View {
     private PublishSubject<Point> pointsSubject = PublishSubject.create();
 
     private Paint brush = new Paint(Paint.ANTI_ALIAS_FLAG);
-    private Path path = new Path();
+    private List<Pair<Path, Paint>> paths = new ArrayList<>();
 
     private float density;
 
     private TreeSet<Point> points = new TreeSet<>((lhs, rhs) -> lhs.index - rhs.index);
     private int lastAddedPointIndex = -1;
+
+    private int selectedColor = Color.BLACK;
+    private int selectedThickness = 5;
 
     public DrawByFingerCanvas(Context context) {
         super(context);
@@ -44,11 +51,20 @@ public class DrawByFingerCanvas extends View {
 
     private void init() {
         if (isInEditMode()) return;
-
-        brush.setStyle(Paint.Style.STROKE);
-        brush.setStrokeWidth(5);
-
         density = getResources().getDisplayMetrics().density;
+        initBrush(brush, null);
+    }
+
+    private void initBrush(Paint brush, Point point) {
+        if (point == null) {
+            brush.setStyle(Paint.Style.STROKE);
+            brush.setStrokeWidth(selectedThickness);
+            brush.setColor(selectedColor);
+        } else {
+            brush.setStyle(Paint.Style.STROKE);
+            brush.setStrokeWidth(point.thickness);
+            brush.setColor(point.color);
+        }
     }
 
     public Observable<Point> getPointsObservable() {
@@ -57,7 +73,9 @@ public class DrawByFingerCanvas extends View {
 
     @Override
     protected void onDraw(Canvas c) {
-        c.drawPath(path, brush);
+        for (Pair<Path, Paint> path : paths) {
+            c.drawPath(path.first, path.second);
+        }
     }
 
     @Override
@@ -65,6 +83,9 @@ public class DrawByFingerCanvas extends View {
         Point p = new Point();
         p.x = event.getX() / density;
         p.y = event.getY() / density;
+
+        p.color = selectedColor;
+        p.thickness = selectedThickness;
 
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
@@ -85,20 +106,40 @@ public class DrawByFingerCanvas extends View {
         return true;
     }
 
-    public void addPoint(Point p) {
+    public int getSelectedColor() {
+        return selectedColor;
+    }
+
+    public void setSelectedColor(int selectedColor) {
+        this.selectedColor = selectedColor;
+    }
+
+    public void setSelectedThickness(int selectedThickness) {
+        this.selectedThickness = selectedThickness;
+    }
+
+    public int getSelectedThickness() {
+        return selectedThickness;
+    }
+
+    public synchronized void addPoint(Point p) {
         points.add(p);
 
         if (!points.isEmpty() && points.last().index > lastAddedPointIndex)
             lastAddedPointIndex = points.last().index;
 
-        path.reset();
+        paths.clear();
         for (Point point : points) {
             switch (point.type) {
                 case DOWN:
-                    path.moveTo(point.x * density, point.y * density);
+                    Paint brush = new Paint(Paint.ANTI_ALIAS_FLAG);
+                    initBrush(brush, point);
+                    Pair<Path, Paint> pair = new Pair<>(new Path(), brush);
+                    paths.add(pair);
+                    pair.first.moveTo(point.x * density, point.y * density);
                     break;
                 case MOVE:
-                    path.lineTo(point.x * density, point.y * density);
+                    paths.get(paths.size() - 1).first.lineTo(point.x * density, point.y * density);
                     break;
             }
         }
@@ -107,7 +148,7 @@ public class DrawByFingerCanvas extends View {
 
     public void clear() {
         points.clear();
-        path.reset();
+        paths.clear();
         invalidate();
     }
 }

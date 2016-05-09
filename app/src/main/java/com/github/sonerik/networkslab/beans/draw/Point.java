@@ -22,4 +22,8 @@ public class Point {
     public float x;
     @JsonField
     public float y;
+    @JsonField
+    public int color;
+    @JsonField
+    public float thickness;
 }

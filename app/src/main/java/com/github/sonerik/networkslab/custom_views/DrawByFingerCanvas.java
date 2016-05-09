@@ -139,7 +139,7 @@ public class DrawByFingerCanvas extends View {
                     pair.first.moveTo(point.x * density, point.y * density);
                     break;
                 case MOVE:
-                    paths.get(paths.size() - 1).first.lineTo(point.x * density, point.y * density);
+                    if (paths.size() > 0) paths.get(paths.size() - 1).first.lineTo(point.x * density, point.y * density);
                     break;
             }
         }

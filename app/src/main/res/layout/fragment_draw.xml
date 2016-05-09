@@ -31,6 +31,17 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             />
+
+        <android.support.v7.widget.AppCompatSeekBar
+            android:id="@+id/thicknessSeekBar"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_toLeftOf="@+id/btnClear"
+            android:layout_toRightOf="@+id/btnSelectColor"
+            android:max="50"
+            android:progress="5"
+            />
+
     </RelativeLayout>
 
     <include layout="@layout/layout_waiting" />

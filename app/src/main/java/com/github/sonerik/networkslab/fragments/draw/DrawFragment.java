@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.SeekBar;
 
 import com.github.sonerik.networkslab.Constants;
 import com.github.sonerik.networkslab.R;
@@ -32,6 +33,9 @@ public abstract class DrawFragment extends NetworkFragment {
     @Bind(R.id.drawArea)
     View drawArea;
 
+    @Bind(R.id.thicknessSeekBar)
+    SeekBar thicknessSeekBar;
+
     private Subscription pointsSubscription;
 
     @Nullable
@@ -44,6 +48,23 @@ public abstract class DrawFragment extends NetworkFragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
+
+        thicknessSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                canvas.setSelectedThickness(progress);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
 
         pointsSubscription = canvas.getPointsObservable()
                                    .buffer(1)

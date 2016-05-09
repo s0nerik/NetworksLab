@@ -117,6 +117,21 @@ public abstract class DrawFragment extends NetworkFragment {
                 .show(getChildFragmentManager(), "ChromaDialog");
     }
 
+    @OnClick(R.id.btnCircle)
+    public void onCircleSelected() {
+        canvas.setSelectedFigure(Point.Figure.CIRCLE);
+    }
+
+    @OnClick(R.id.btnCube)
+    public void onCubeSelected() {
+        canvas.setSelectedFigure(Point.Figure.CUBE);
+    }
+
+    @OnClick(R.id.btnLine)
+    public void onLineSelected() {
+        canvas.setSelectedFigure(Point.Figure.LINE);
+    }
+
     @Override
     protected String getServiceName() {
         return Constants.SERVICE_DRAW;

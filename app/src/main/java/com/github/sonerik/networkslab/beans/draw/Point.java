@@ -13,9 +13,12 @@ import lombok.NoArgsConstructor;
 @JsonObject
 public class Point {
     public enum Type { DOWN, MOVE }
+    public enum Figure { LINE, CIRCLE, CUBE }
 
     @JsonField(typeConverter = PointTypeConverter.class)
     public Type type;
+    @JsonField(typeConverter = PointFigureConverter.class)
+    public Figure figure;
     @JsonField
     public int index;
     @JsonField

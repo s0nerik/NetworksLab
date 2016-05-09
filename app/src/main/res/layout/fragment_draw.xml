@@ -42,6 +42,33 @@
             android:progress="5"
             />
 
+        <Button
+            android:id="@+id/btnCircle"
+            android:text="Circle"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentBottom="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            />
+
+        <Button
+            android:id="@+id/btnCube"
+            android:text="Cube"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentBottom="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            />
+
+        <Button
+            android:id="@+id/btnLine"
+            android:text="Line"
+            android:layout_centerHorizontal="true"
+            android:layout_alignParentBottom="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            />
+
     </RelativeLayout>
 
     <include layout="@layout/layout_waiting" />

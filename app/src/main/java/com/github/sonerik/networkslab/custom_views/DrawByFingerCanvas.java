@@ -23,16 +23,18 @@ public class DrawByFingerCanvas extends View {
 
     private PublishSubject<Point> pointsSubject = PublishSubject.create();
 
-    private Paint brush = new Paint(Paint.ANTI_ALIAS_FLAG);
     private List<Pair<Path, Paint>> paths = new ArrayList<>();
 
     private float density;
 
-    private TreeSet<Point> points = new TreeSet<>((lhs, rhs) -> lhs.index - rhs.index);
+    private final TreeSet<Point> points = new TreeSet<>((lhs, rhs) -> lhs.index - rhs.index);
     private int lastAddedPointIndex = -1;
 
     private int selectedColor = Color.BLACK;
     private int selectedThickness = 5;
+    private Point.Figure selectedFigure = Point.Figure.LINE;
+
+    private boolean ignoreCurrentTouch = false;
 
     public DrawByFingerCanvas(Context context) {
         super(context);
@@ -52,10 +54,10 @@ public class DrawByFingerCanvas extends View {
     private void init() {
         if (isInEditMode()) return;
         density = getResources().getDisplayMetrics().density;
-        initBrush(brush, null);
     }
 
-    private void initBrush(Paint brush, Point point) {
+    private Paint newBrush(Point point) {
+        Paint brush = new Paint(Paint.ANTI_ALIAS_FLAG);
         if (point == null) {
             brush.setStyle(Paint.Style.STROKE);
             brush.setStrokeWidth(selectedThickness);
@@ -65,6 +67,7 @@ public class DrawByFingerCanvas extends View {
             brush.setStrokeWidth(point.thickness);
             brush.setColor(point.color);
         }
+        return brush;
     }
 
     public Observable<Point> getPointsObservable() {
@@ -86,6 +89,7 @@ public class DrawByFingerCanvas extends View {
 
         p.color = selectedColor;
         p.thickness = selectedThickness;
+        p.figure = selectedFigure;
 
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
@@ -122,7 +126,15 @@ public class DrawByFingerCanvas extends View {
         return selectedThickness;
     }
 
-    public synchronized void addPoint(Point p) {
+    public void setSelectedFigure(Point.Figure selectedFigure) {
+        this.selectedFigure = selectedFigure;
+    }
+
+    public Point.Figure getSelectedFigure() {
+        return selectedFigure;
+    }
+
+    public void addPoint(Point p) {
         points.add(p);
 
         if (!points.isEmpty() && points.last().index > lastAddedPointIndex)
@@ -132,14 +144,49 @@ public class DrawByFingerCanvas extends View {
         for (Point point : points) {
             switch (point.type) {
                 case DOWN:
-                    Paint brush = new Paint(Paint.ANTI_ALIAS_FLAG);
-                    initBrush(brush, point);
-                    Pair<Path, Paint> pair = new Pair<>(new Path(), brush);
+                    Pair<Path, Paint> pair = new Pair<>(new Path(), newBrush(point));
                     paths.add(pair);
-                    pair.first.moveTo(point.x * density, point.y * density);
+                    float figureSize = point.thickness * 10;
+                    switch (point.figure) {
+                        case LINE:
+                            pair.first.moveTo(point.x * density, point.y * density);
+                            break;
+                        case CIRCLE:
+                            pair.first.addCircle(point.x * density, point.y * density, figureSize, Path.Direction.CW);
+                            break;
+                        case CUBE:
+                            pair.first.addRect(
+                                    point.x * density - figureSize / 2.0f,
+                                    point.y * density - figureSize / 2.0f,
+                                    point.x * density + figureSize / 2.0f,
+                                    point.y * density + figureSize / 2.0f,
+                                    Path.Direction.CW
+                            );
+                            break;
+                    }
                     break;
                 case MOVE:
-                    if (paths.size() > 0) paths.get(paths.size() - 1).first.lineTo(point.x * density, point.y * density);
+                    if (paths.size() > 0) {
+                        Pair<Path, Paint> lastPath = paths.get(paths.size() - 1);
+                        float figureSize1 = point.thickness * 10;
+                        switch (point.figure) {
+                            case LINE:
+                                lastPath.first.lineTo(point.x * density, point.y * density);
+                                break;
+                            case CIRCLE:
+                                lastPath.first.addCircle(point.x * density, point.y * density, figureSize1, Path.Direction.CW);
+                                break;
+                            case CUBE:
+                                lastPath.first.addRect(
+                                        point.x * density - figureSize1 / 2.0f,
+                                        point.y * density - figureSize1 / 2.0f,
+                                        point.x * density + figureSize1 / 2.0f,
+                                        point.y * density + figureSize1 / 2.0f,
+                                        Path.Direction.CW
+                                );
+                                break;
+                        }
+                    }
                     break;
             }
         }

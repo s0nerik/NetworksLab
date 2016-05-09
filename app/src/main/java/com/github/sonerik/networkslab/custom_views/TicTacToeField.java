@@ -14,7 +14,7 @@ import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 
 public class TicTacToeField extends LinearLayout {
-    public enum CellValue { EMPTY, X, O }
+    public enum CellValue { EMPTY, X, O, NOBODY }
 
     public interface CellValueChangedListener {
         void onCellValueChanged(int x, int y, CellValue value);
@@ -133,6 +133,20 @@ public class TicTacToeField extends LinearLayout {
 
         if (allSameDiag2 && cellVals[2][0] != CellValue.EMPTY) {
             return cellVals[2][0];
+        }
+
+        boolean isDraw = true;
+        for (CellValue[] cellVal : cellVals) {
+            for (CellValue cellValue : cellVal) {
+                if (cellValue == CellValue.EMPTY) {
+                    isDraw = false;
+                    break;
+                }
+            }
+        }
+
+        if (isDraw) {
+            return CellValue.NOBODY;
         }
 
         return CellValue.EMPTY;

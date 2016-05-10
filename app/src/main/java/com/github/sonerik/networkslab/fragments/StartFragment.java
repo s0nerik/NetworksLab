@@ -16,6 +16,8 @@ import com.github.sonerik.networkslab.fragments.chat.ChatClientFragment;
 import com.github.sonerik.networkslab.fragments.chat.ChatHostFragment;
 import com.github.sonerik.networkslab.fragments.draw.DrawClientFragment;
 import com.github.sonerik.networkslab.fragments.draw.DrawHostFragment;
+import com.github.sonerik.networkslab.fragments.files.FilesClientFragment;
+import com.github.sonerik.networkslab.fragments.files.FilesHostFragment;
 import com.github.sonerik.networkslab.fragments.tic_tac_toe.TicTacToeClientFragment;
 import com.github.sonerik.networkslab.fragments.tic_tac_toe.TicTacToeHostFragment;
 
@@ -64,6 +66,11 @@ public class StartFragment extends Fragment {
     @OnClick(R.id.btnDraw)
     public void onStartDraw() {
         show(DrawClientFragment::new, DrawHostFragment::new);
+    }
+
+    @OnClick(R.id.btnFiles)
+    public void onFiles() {
+        show(FilesClientFragment::new, FilesHostFragment::new);
     }
 
     private void show(Func0<Fragment> clientFragmentCreator, Func0<Fragment> hostFragmentCreator) {

@@ -8,8 +8,11 @@ public class Constants {
     public static final int     SERVICE_CHAT_DEFAULT_PORT = 50489;
 
     public static final String  SERVICE_TIC_TAC_TOE = "tic_tac_toe";
-    public static final int     SERVICE_TIC_TAC_TOE_DEFAULT_PORT = 50489;
+    public static final int     SERVICE_TIC_TAC_TOE_DEFAULT_PORT = 50490;
 
     public static final String  SERVICE_DRAW = "draw";
-    public static final int     SERVICE_DRAW_DEFAULT_PORT = 50489;
+    public static final int     SERVICE_DRAW_DEFAULT_PORT = 50491;
+
+    public static final String  SERVICE_FILES = "files";
+    public static final int     SERVICE_FILES_DEFAULT_PORT = 50492;
 }
